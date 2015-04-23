@@ -1,0 +1,31 @@
+{
+  "app": {
+    "environment": [
+      {
+        "value": "\/usr\/local\/sbin:\/usr\/local\/bin:\/usr\/sbin:\/usr\/bin:\/sbin:\/bin",
+        "name": "PATH"
+      }
+    ],
+    "group": "0",
+    "user": "0",
+    "exec": [
+      "\/start.sh"
+    ],
+    "isolators": [
+      { "name": "host\/privileged", "value": true }
+    ]
+  },
+  "labels": [
+    {
+      "value": "latest",
+      "name": "version"
+    },
+    {
+      "value": "linux",
+      "name": "os"
+    }
+  ],
+  "name": "apcera.com\/kurma\/console",
+  "acVersion": "0.1.1",
+  "acKind": "ImageManifest"
+}

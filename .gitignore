@@ -1,0 +1,6 @@
+tmp
+*.aci
+*.iso
+*.tar.gz
+*.tar.bz2
+*.cntmp

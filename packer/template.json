@@ -1,0 +1,58 @@
+{
+  "provisioners": [
+    {
+      "type": "shell",
+      "scripts": [ "scripts/01_format_disk.sh" ]
+    },
+    {
+      "type": "file",
+      "source": "../output/init-rapid.tar.gz",
+      "destination": "/tmp/rapid.tar.gz"
+    },
+    {
+      "type": "shell",
+      "scripts": [ "scripts/02_setup_kurma.sh" ]
+    },
+    {
+      "type": "shell",
+      "scripts": [ "scripts/03_grub-install.sh" ]
+    },
+    {
+      "type": "shell",
+      "scripts": [ "scripts/99_cleanup.sh" ]
+    }
+  ],
+  "post-processors": [
+    {
+      "type": "vagrant",
+      "output": "kurmaos-vagrant-{{timestamp}}.box",
+      "keep_input_artifact": true
+    }
+  ],
+  "builders": [
+    {
+      "type": "vmware-iso",
+      "boot_command": [
+        "<enter><wait5><wait5><enter><wait5><wait5><wait5><wait5><wait5><wait5>",
+        "passwd root<enter><wait>blah1234<enter><wait>blah1234<enter><wait>",
+        "/etc/init.d/sshd start<enter><wait>"
+      ],
+      "boot_wait": "5s",
+      "disk_size": 8192,
+      "guest_os_type": "other3xlinux-64",
+      "http_directory": "http",
+      "iso_checksum": "9f3fc95861e867c6b81dbd5ee0fcca7e",
+      "iso_checksum_type": "md5",
+      "iso_url": "https://s3.amazonaws.com/kurmaos-artifacts/stage3/admincd-amd64-20150416.iso",
+      "ssh_username": "root",
+      "ssh_password": "blah1234",
+      "ssh_port": 22,
+      "ssh_wait_timeout": "10000s",
+      "vmx_data": {
+        "memsize": "2048",
+        "numvcpus": "1",
+        "cpuid.coresPerSocket": "1"
+      }
+    }
+  ]
+}

@@ -1,0 +1,14 @@
+{
+  "disks": [
+    {
+      "device": "LABEL=root",
+      "usage":  [ "pods", "volumes" ]
+    }
+  ],
+  "network_config": {
+    "interfaces": [
+      { "device": "lo", "address": "127.0.0.1/8" },
+      { "device": "eth.+", "dhcp": true }
+    ]
+  }
+}

@@ -1,0 +1,16 @@
+{
+  "acVersion": "0.1.1",
+  "acKind": "ImageManifest",
+  "app": {
+    "group": "0",
+    "user": "0",
+    "exec": [ "\/udev.sh" ],
+    "environment": [
+      { "name": "PATH", "value": "\/" }
+    ],
+    "isolators": [
+      { "name": "host/privileged", "value": true }
+    ]
+  },
+  "name": "apcera.com\/kurma\/udev"
+}
