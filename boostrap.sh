@@ -46,6 +46,6 @@ apc import -s -o \
 download 473c86ca61391136975723efa764f85577366bb5474b0ae343f0d878e1493792 \
          "output/console.aci" \
          "https://s3.amazonaws.com/kurmaos-artifacts/aci/console-20150422.aci"
-download 523d832821b4a7f503187703f105dc9c9f9e7e7d66b4f6a69cacc71411d16076 \
+download 2002699b4fb7bf26cdd9e484f5f26c29d06253faf707977e9113af56f01c2b49 \
          "output/ntp.aci" \
-         "https://s3.amazonaws.com/kurmaos-artifacts/aci/ntp-20150422.aci"
+         "https://s3.amazonaws.com/kurmaos-artifacts/aci/ntp-20150428.aci"

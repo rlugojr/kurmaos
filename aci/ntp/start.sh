@@ -1,3 +1,12 @@
 #!/sh
-# FIXME convert spaces in NTP_SERVERS to be multiple -p arguments
-exec /ntpd -n -N -p $NTP_SERVERS
+
+set -e -x
+
+# convert the list of servers on $NTP_SERVERS to use multiple -p command
+# arguments.
+SERVERS=""
+for i in $NTP_SERVERS; do
+    SERVERS="-p $i $SERVERS"
+done
+
+exec /ntpd -n -N $SERVERS
