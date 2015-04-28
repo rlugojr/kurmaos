@@ -69,3 +69,19 @@ The following pieces make up the build environment:
 * `output/` is where the scripts will look for local build artifacts.
 * `vagrant/` provides a way to quickly bring up a virtual machine running
   KurmaOS from a step 5 output. *(not yet finished)*
+
+### NOTE WHEN BUILDING PRE-STEP 4
+
+When you are building with steps 2 or 3, it is currently necessary to modify the
+attributes of the compiler stager on the system. The `emerge-webrsync` call uses
+up a lot of storage, and won't fit with the stock disk allocation. For some of
+the compilation, I also recommend upping the default memory. However currently,
+there is no way with the package build scripts to specify how much memory or
+disk the stager should have.
+
+The following commands will update them. It is recommended to only do this with
+vagrant or a demo image, rather than on a live cluster.
+
+```
+$ apc job update /apcera/stagers::compiler --memory 1gb --disk 10gb
+```
