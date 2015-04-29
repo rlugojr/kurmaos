@@ -7,19 +7,6 @@ set -e -x
     cd $GOPATH/src
     tar czf $OUTPUTPATH/code.tar.gz \
         github.com/apcera/kurma \
-        github.com/apcera/gnatsd \
-        github.com/apcera/logray \
-        github.com/apcera/util \
-        github.com/apcera/termtables \
-        github.com/creack/termios \
-        github.com/appc/spec \
-        github.com/kr/pty \
-        github.com/vishvananda/netlink \
-        github.com/golang/protobuf \
-        google.golang.org/grpc \
-        github.com/bradfitz/http2 \
-        golang.org/x \
-        google.golang.org/cloud \
         --exclude=.git
 )
 

@@ -31,21 +31,21 @@ function download() {
 download 04724c41cf9625c3e2fe3d615ea64d775905c2a304c1e5d3244e693bdfe47e43 \
          "output/kurmaos-stage3.cntmp" \
          "https://s3.amazonaws.com/kurmaos-artifacts/stage3/kurmaos-stage3-20150416.cntmp"
-download 16dfa2f6c2cf268f96cae01c66e849b32dcf3030e2f269e6cf96c64401df7b18 \
+download 02d8d93a5e302283a86976dd9c95ebd59bee42f81726560a9361e55aa39e334c \
          "output/kurmaos-gentoo-stage4.cntmp" \
-         "https://s3.amazonaws.com/kurmaos-artifacts/stage4/kurmaos-gentoo-stage4-20150421.cntmp"
-download 6b6e06d1d39974b571df6f99d7972a50088529d97d5f1f974df956443120c253 \
+         "https://s3.amazonaws.com/kurmaos-artifacts/stage4/kurmaos-gentoo-stage4-20150429.cntmp"
+download 1be4114c38c92986df2f30156056869713864b35d7b24e5e9ccc477e197ef83f \
          "output/kurmaos-gentoo-kernel.cntmp" \
-         "https://s3.amazonaws.com/kurmaos-artifacts/kernel/kurmaos-gentoo-kernel-3.19.5.cntmp"
+         "https://s3.amazonaws.com/kurmaos-artifacts/kernel/kurmaos-gentoo-kernel-4.0.1.cntmp"
 apc import -s -o \
     output/kurmaos-stage3.cntmp \
     output/kurmaos-gentoo-stage4.cntmp \
     output/kurmaos-gentoo-kernel.cntmp
 
 # Download the base system ACIs
-download 473c86ca61391136975723efa764f85577366bb5474b0ae343f0d878e1493792 \
+download 85f35f43b52c881fef613c09ccb68f071f3453221cd708fafc4661613c306c9f \
          "output/console.aci" \
-         "https://s3.amazonaws.com/kurmaos-artifacts/aci/console-20150422.aci"
-download 2002699b4fb7bf26cdd9e484f5f26c29d06253faf707977e9113af56f01c2b49 \
+         "https://s3.amazonaws.com/kurmaos-artifacts/aci/console-20150429.aci"
+download 91eefda229f30810b75b2cf0178e4e4665181c98cd5daac01ac2542939fadf8e \
          "output/ntp.aci" \
-         "https://s3.amazonaws.com/kurmaos-artifacts/aci/ntp-20150428.aci"
+         "https://s3.amazonaws.com/kurmaos-artifacts/aci/ntp-20150429.aci"
