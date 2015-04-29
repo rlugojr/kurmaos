@@ -5,8 +5,8 @@ images from top to bottom.
 
 ### Build Process
 
-KurmaOS is uses Gentoo as the base for its build environment. Gentoo provides
-the advantage of being very up to date, vanilla, and barebones in terms of being
+KurmaOS uses Gentoo as the base for its build environment. Gentoo provides the
+advantage of being very up to date, vanilla, and barebones in terms of being
 able to pull and build on a minimal image.
 
 Kurma's build process leverages Continuum's package build scripts for handling
