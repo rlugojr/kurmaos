@@ -5,9 +5,9 @@ set -e -x
 (
     OUTPUTPATH=`pwd`/output
     cd $GOPATH/src
-    tar czf $OUTPUTPATH/code.tar.gz \
-        github.com/apcera/kurma \
-        --exclude=.git
+    tar --exclude=.git -czf \
+        $OUTPUTPATH/code.tar.gz \
+        github.com/apcera/kurma
 )
 
 apc package build aci/console/console.conf --batch
