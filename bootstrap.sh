@@ -8,7 +8,7 @@ function download() {
     local url=$3
 
     if [ -f "$file" ]; then
-        local currenthash=$(sha256sum "$file" | awk '{print $1}')
+        local currenthash=$(shasum -a 256 "$file" | awk '{print $1}')
         if [ "$currenthash" = "$hash" ]; then
             echo "Skipping $file"
             return 0
@@ -17,7 +17,7 @@ function download() {
 
     echo "Downloading $url"
     curl -o "$file" "$url"
-    local currenthash=$(sha256sum "$file" | awk '{print $1}')
+    local currenthash=$(shasum -a 256 "$file" | awk '{print $1}')
     if [ ! "$currenthash" = "$hash" ]; then
         echo "Validation of $url failed!"
         echo "Expected hash $hash"

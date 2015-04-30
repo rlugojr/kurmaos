@@ -5,9 +5,9 @@ set -e -x
 (
     OUTPUTPATH=`pwd`/output
     cd $GOPATH/src
-    tar czf $OUTPUTPATH/code.tar.gz \
-        github.com/apcera/kurma \
-        --exclude=.git
+    tar --exclude=.git -czf \
+        $OUTPUTPATH/code.tar.gz \
+        github.com/apcera/kurma
 )
 
 apc package build base/init/init-rapid.conf -n kurmaos-init-rapid --batch
