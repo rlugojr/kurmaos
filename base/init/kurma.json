@@ -1,7 +1,7 @@
 {
   "disks": [
     {
-      "device": "LABEL=root",
+      "device": "LABEL=ROOT",
       "usage":  [ "pods", "volumes" ]
     }
   ],
