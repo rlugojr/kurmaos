@@ -43,6 +43,9 @@ apc import -s -o \
     output/kurmaos-gentoo-kernel.cntmp
 
 # Download the base system ACIs
+download fbdd79e53455e9bfa255749ea0cb452c029821d58bc3c8438c69f4c7af48723e \
+         "output/api.aci" \
+         "https://s3.amazonaws.com/kurmaos-artifacts/aci/api-20150430.aci"
 download 85f35f43b52c881fef613c09ccb68f071f3453221cd708fafc4661613c306c9f \
          "output/console.aci" \
          "https://s3.amazonaws.com/kurmaos-artifacts/aci/console-20150429.aci"

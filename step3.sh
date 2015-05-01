@@ -17,3 +17,7 @@ apc package delete console --batch
 apc package build aci/ntp/ntp.conf --batch
 apc package download ntp -f output/ntp.aci
 apc package delete ntp --batch
+
+apc package build aci/api/api.conf --batch
+apc package download api -f output/api.aci
+apc package delete api --batch
