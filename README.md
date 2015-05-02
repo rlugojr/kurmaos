@@ -5,12 +5,12 @@ images from top to bottom.
 
 ### Build Process
 
-KurmaOS uses Linux Gentoo as the base OS for the build environment. Gentoo has several
-advantages, including being up-to-date, vanilla, and barebones. Gentoo is ideal for pulling
+KurmaOS uses Gentoo as the base OS for the build environment. Gentoo has several
+advantages, including being up-to-date, vanilla, and bare bones. Gentoo is ideal for pulling
 and building on a minimal image.
 
 The Kurma build process leverages the [Apcera package build scripts](https://github.com/apcera/continuum-package-scripts).
-This provides you with a way to script the building of Kurma and an efficient machanism for building 
+This provides you with a way to script the building of Kurma and an efficient mechanism for building 
 containers concurrently (such as on a full cluster). The Kurma build process also allows you to build Apcera Continuum from a
 local virtual machine using one of the [trial images](https://www.apcera.com/getstarted/). This allows you to
 compile everything on a Linux virtual machine even if you're on a Mac or Windows host.
