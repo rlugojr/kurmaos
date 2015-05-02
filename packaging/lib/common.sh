@@ -92,6 +92,35 @@ error() {
   _message "${V_BOLD_RED}ERROR   " "$*"
 }
 
+function cleanup_chroot() {
+    echo "Cleaning up"
+    mount | grep "${SCRIPT_ROOT}/chroot" | awk '{print $3}' | sort -r | xargs -n1 sudo umount
+}
+
+function setup_chroot() {
+    if [ ! -d "${SCRIPT_ROOT}/chroot" ]; then
+        echo "Setting up the chroot"
+        mkdir ${SCRIPT_ROOT}/chroot
+        unzip -p "${SCRIPT_ROOT}/../output/kurmaos-stage3.cntmp" PACKAGE_RESOURCE_0001.tar.gz | sudo tar xj -C "${SCRIPT_ROOT}/chroot"
+        unzip -p "${SCRIPT_ROOT}/../output/kurmaos-gentoo-stage4.cntmp" PACKAGE_RESOURCE_0001.tar.gz | sudo tar xz -C "${SCRIPT_ROOT}/chroot"
+    fi
+
+    echo "Bind mounting..."
+    sudo mkdir -p "${SCRIPT_ROOT}/chroot/kurmaos" \
+         "${SCRIPT_ROOT}/chroot/proc" \
+         "${SCRIPT_ROOT}/chroot/sys" \
+         "${SCRIPT_ROOT}/chroot/dev"
+    sudo mount -t proc proc "${SCRIPT_ROOT}/chroot/proc"
+    sudo mount --rbind /sys "${SCRIPT_ROOT}/chroot/sys"
+    sudo mount --make-rslave "${SCRIPT_ROOT}/chroot/sys"
+    sudo mount --rbind /dev "${SCRIPT_ROOT}/chroot/dev"
+    sudo mount --make-rslave "${SCRIPT_ROOT}/chroot/dev"
+    sudo mount --bind "${SCRIPT_ROOT}/../" "${SCRIPT_ROOT}/chroot/kurmaos"
+    sudo mount -t tmpfs none "${SCRIPT_ROOT}/chroot/tmp"
+    fix_mtab "${SCRIPT_ROOT}/chroot"
+
+    trap cleanup_chroot EXIT
+}
 
 # For all die functions, they must explicitly force set +eu;
 # no reason to have them cause their own crash if we're inthe middle

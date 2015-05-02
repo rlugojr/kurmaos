@@ -25,7 +25,8 @@
         "label":"OEM",
         "type":"data",
         "blocks":"262144",
-        "fs_type":"ext2"
+        "fs_type":"ext2",
+        "mount":"/boot/oem"
       },
       "4":{
         "label":"ROOT",
