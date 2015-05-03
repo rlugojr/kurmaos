@@ -7,7 +7,7 @@ setup_chroot
 
 mkdir -p ../output/images/virtualbox
 touch ../output/images/virtualbox/virtualbox.vmdk
-touch ../output/images/virtualboxkurmaos.ovf
+touch ../output/images/virtualbox/kurmaos.ovf
 
 echo "Generating"
 sudo chroot ./chroot /bin/bash <<EOF

@@ -145,11 +145,11 @@ case "${FLAGS_target}" in
         ;;
     x86_64-xen)
         info "Installing default x86_64 Xen bootloader."
-        mkdir -p "${ESP_DIR}/xen" "${ESP_DIR}/boot/grub"
+        mkdir -p "${ESP_DIR}/oem/grub"
         cp "${ESP_DIR}/${GRUB_DIR}/${CORE_NAME}" \
-            "${ESP_DIR}/xen/pvboot-x86_64.elf"
+            "${ESP_DIR}/oem/pvboot-x86_64.elf"
         cp "${SCRIPT_ROOT}/menu.lst" \
-            "${ESP_DIR}/boot/grub/menu.lst"
+            "${ESP_DIR}/oem/grub/menu.lst"
         ;;
 esac
 

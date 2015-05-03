@@ -35,12 +35,6 @@
         "fs_type":"ext4",
         "mount":"/"
       }
-    },
-    "vm":{
-      "4":{
-        "label":"ROOT",
-        "blocks":"12943360"
-      }
     }
   }
 }
