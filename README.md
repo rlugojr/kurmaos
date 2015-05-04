@@ -3,6 +3,10 @@
 This repository contains the scripts and tools needed to build KurmaOS
 images from top to bottom.
 
+### Downloading
+
+The latest release images can be found under [Releases](https://github.com/apcera/kurmaos/releases).
+
 ### Build Process
 
 KurmaOS uses Gentoo as the base OS for the build environment. Gentoo has several
@@ -10,7 +14,7 @@ advantages, including being up-to-date, vanilla, and bare bones. Gentoo is ideal
 and building on a minimal image.
 
 The Kurma build process leverages the [Apcera package build scripts](https://github.com/apcera/continuum-package-scripts).
-This provides you with a way to script the building of Kurma and an efficient mechanism for building 
+This provides you with a way to script the building of Kurma and an efficient mechanism for building
 containers concurrently (such as on a full cluster). The Kurma build process also allows you to build Apcera Continuum from a
 local virtual machine using one of the [trial images](https://www.apcera.com/getstarted/). This allows you to
 compile everything on a Linux virtual machine even if you're on a Mac or Windows host.
@@ -29,13 +33,13 @@ The steps to build a base Kurma image are as follows:
 
 After this, you are all set.
 
-The artifacts of steps 1-3 can all be managed by Apcera, so that during 
-the course of normal development, you only need to complete steps 4-5. 
+The artifacts of steps 1-3 can all be managed by Apcera, so that during
+the course of normal development, you only need to complete steps 4-5.
 For more information on steps 1-3, refer to the [Kurma repository readme](https://github.com/apcera/kurma).
 
 Steps 4 and 5 have some distinctions between a development build and a release
 build. A development build is very quick and will output a tarball containing the kernel
-(`bzImage`) and the `initrd` image. A production release will generate a kernel which has 
+(`bzImage`) and the `initrd` image. A production release will generate a kernel which has
 the `initrd` image embedded in it. However, this involves recompiling the kernel which makes
 for a longer iteration time. The benefit of this is that the production release
 involves updating only a single file.
@@ -72,8 +76,8 @@ If you are building steps 2 or 3, it is necessary to modify the
 attributes of the compiler stager on the system. The `emerge-webrsync` call uses
 up a lot of storage, and won't fit with the stock disk allocation. For some of
 the compilation, we recommend upping the default memory. Currently,
-there is no way to specify how much memory or disk the stager should have 
-using the package build scripts. 
+there is no way to specify how much memory or disk the stager should have
+using the package build scripts.
 
 The following commands will update the resources settings. It is recommended to only do this with
 vagrant or a demo image, rather than on a live cluster.
