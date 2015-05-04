@@ -10,5 +10,8 @@
       { "device": "lo", "address": "127.0.0.1/8" },
       { "device": "eth.+", "dhcp": true }
     ]
-  }
+  },
+  "init_containers": [
+    "file:///api.aci"
+  ]
 }
