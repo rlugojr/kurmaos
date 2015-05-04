@@ -1,6 +1,6 @@
 # KurmaOS
 
-This repository contains the scripts and tools needed to to build KurmaOS
+This repository contains the scripts and tools needed to build KurmaOS
 images from top to bottom.
 
 ### Build Process
@@ -30,7 +30,7 @@ The steps to build a base Kurma image are as follows:
 After this, you are all set.
 
 The artifacts of steps 1-3 can all be managed by Apcera, so that during 
-the course of normal development, you just need to complete steps 4-5. 
+the course of normal development, you only need to complete steps 4-5. 
 For more information on steps 1-3, refer to the [Kurma repository readme](https://github.com/apcera/kurma).
 
 Steps 4 and 5 have some distinctions between a development build and a release
@@ -44,7 +44,7 @@ involves updating only a single file.
 
 To get started with building Kurma for KurmaOS, you likely want to start by using
 existing images for build steps 1, 2, 3. You can do these steps if you
-want, but generally they're updated when it is necessary to for updating
+want, but generally they're updated when it is necessary to update
 library dependencies, the base build environment, or kernel versions.
 
 To get started with the latest official images for steps 1, 2, and 3, use the
