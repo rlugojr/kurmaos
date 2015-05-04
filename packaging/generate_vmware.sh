@@ -6,16 +6,16 @@ SCRIPT_ROOT=$(readlink -f $(dirname "$0"))
 setup_chroot
 
 mkdir -p ../output/images/vmware
-touch ../output/images/vmware/vmware.vmdk
+touch ../output/images/vmware/kurmaos.vmdk
 
 echo "Generating"
 sudo chroot ./chroot /bin/bash <<EOF
 source /etc/profile
 cd kurmaos/packaging
-qemu-img convert -f raw ../output/images/raw.img -O vmdk -o adapter_type=lsilogic ../output/images/vmware/vmware.vmdk
+qemu-img convert -f raw ../output/images/raw.img -O vmdk -o adapter_type=lsilogic ../output/images/vmware/kurmaos.vmdk
 EOF
 
-cat >"../output/images/vmware/vmware.vmx" <<EOF
+cat >"../output/images/vmware/kurmaos.vmx" <<EOF
 #!/usr/bin/vmware
 .encoding = "UTF-8"
 config.version = "8"
@@ -54,3 +54,8 @@ pciBridge7.present = "TRUE"
 pciBridge7.virtualDev = "pcieRootPort"
 pciBridge7.functions = "8"
 EOF
+
+(
+    cd ../output/images/vmware
+    zip -9 kurmaos-vmware.zip kurmaos.vmx kurmaos.vmdk
+)
