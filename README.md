@@ -79,8 +79,7 @@ the compilation, we recommend upping the default memory. Currently,
 there is no way to specify how much memory or disk the stager should have
 using the package build scripts.
 
-The following commands will update the resources settings. It is recommended to only do this with
-vagrant or a demo image, rather than on a live cluster.
+The following commands will update the resources settings. It is recommended to only do this with the TBYB image.
 
 ```
 $ apc job update /apcera/stagers::compiler --memory 1gb --disk 10gb
