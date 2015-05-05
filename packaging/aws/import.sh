@@ -11,7 +11,6 @@ set -e -o pipefail
 DIR=$(dirname $0)
 source $DIR/regions.sh
 
-readonly COREOS_EPOCH=1372636800
 VERSION="master"
 GROUP="alpha"
 IMG_PATH=""
@@ -67,8 +66,7 @@ fi
 
 if [[ "$VERSION" == "master" ]]; then
     # Come up with something more descriptive and timestamped
-    TODAYS_VERSION=$(( (`date +%s` - ${COREOS_EPOCH}) / 86400 ))
-    VERSION="${TODAYS_VERSION}-$(date +%H-%M)"
+    VERSION="$(date +%F-%H-%M)"
     GROUP="master"
 fi
 
