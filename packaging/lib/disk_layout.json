@@ -14,7 +14,8 @@
         "type":"efi",
         "blocks":"262144",
         "fs_type":"vfat",
-        "mount":"/boot"
+        "mount":"/boot",
+        "features": ["hybrid"]
       },
       "2":{
         "label":"BIOS-BOOT",
@@ -25,15 +26,20 @@
         "label":"OEM",
         "type":"data",
         "blocks":"262144",
-        "fs_type":"ext2",
-        "mount":"/boot/oem"
+        "fs_type":"ext4"
       },
       "4":{
         "label":"ROOT",
-        "type":"rootfs",
+        "type":"coreos-resize",
         "blocks":"2097152",
         "fs_type":"ext4",
         "mount":"/"
+      }
+    },
+    "vm":{
+      "4":{
+        "label":"ROOT",
+        "blocks":"12943360"
       }
     }
   }

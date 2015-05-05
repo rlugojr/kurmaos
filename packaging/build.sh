@@ -1,5 +1,7 @@
 #!/bin/sh
 
+set -e
+
 SCRIPT_ROOT=$(readlink -f $(dirname "$0"))
 . "${SCRIPT_ROOT}/lib/common.sh" || exit 1
 

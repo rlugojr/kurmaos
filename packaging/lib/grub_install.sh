@@ -27,18 +27,19 @@ switch_to_strict_mode
 # Our GRUB lives under kurmaos/grub so new pygrub versions cannot find grub.cfg
 GRUB_DIR="kurmaos/grub/${FLAGS_target}"
 
-# Modules required to find and read everything else from ESP
-CORE_MODULES=( fat part_gpt search_fs_uuid gzio )
+# Modules required to boot a standard CoreOS configuration
+CORE_MODULES=( normal search test fat part_gpt search_fs_uuid gzio search_part_label terminal gptprio configfile memdisk tar echo )
 
 # Name of the core image, depends on target
 CORE_NAME=
 
 case "${FLAGS_target}" in
     i386-pc)
-        CORE_MODULES+=( biosdisk )
+        CORE_MODULES+=( biosdisk serial )
         CORE_NAME="core.img"
         ;;
     x86_64-efi)
+        CORE_MODULES+=( serial linuxefi efi_gop )
         CORE_NAME="core.efi"
         ;;
     x86_64-xen)
@@ -110,9 +111,15 @@ info "Generating ${GRUB_DIR}/load.cfg"
 ESP_FSID=$(grub2-probe -t fs_uuid -d "${LOOP_DEV}p1")
 sudo_clobber "${ESP_DIR}/${GRUB_DIR}/load.cfg" <<EOF
 search.fs_uuid ${ESP_FSID} root \$root
-set prefix=(\$root)/kurmaos/grub
+set prefix=(memdisk)
 set
 EOF
+
+if [[ ! -f "${ESP_DIR}/kurmaos/grub/grub.cfg.tar" ]]; then
+    info "Generating grub.cfg memdisk"
+    tar cf "${ESP_DIR}/kurmaos/grub/grub.cfg.tar" \
+        -C "${SCRIPT_ROOT}" "grub.cfg"
+fi
 
 info "Generating ${GRUB_DIR}/${CORE_NAME}"
 grub2-mkimage \
@@ -120,14 +127,9 @@ grub2-mkimage \
     --format "${FLAGS_target}" \
     --prefix "(,gpt1)/kurmaos/grub" \
     --config "${ESP_DIR}/${GRUB_DIR}/load.cfg" \
+    --memdisk "${ESP_DIR}/kurmaos/grub/grub.cfg.tar" \
     --output "${ESP_DIR}/${GRUB_DIR}/${CORE_NAME}" \
     "${CORE_MODULES[@]}"
-
-# This script will get called a few times, no need to re-copy grub.cfg
-if [[ ! -f "${ESP_DIR}/kurmaos/grub/grub.cfg" ]]; then
-    info "Installing grub.cfg"
-    cp "${SCRIPT_ROOT}/grub.cfg" "${ESP_DIR}/kurmaos/grub/grub.cfg"
-fi
 
 # Now target specific steps to make the system bootable
 case "${FLAGS_target}" in
@@ -145,11 +147,11 @@ case "${FLAGS_target}" in
         ;;
     x86_64-xen)
         info "Installing default x86_64 Xen bootloader."
-        mkdir -p "${ESP_DIR}/oem/grub"
+        mkdir -p "${ESP_DIR}/grub" "${ESP_DIR}/xen"
         cp "${ESP_DIR}/${GRUB_DIR}/${CORE_NAME}" \
-            "${ESP_DIR}/oem/pvboot-x86_64.elf"
+            "${ESP_DIR}/xen/pvboot-x86_64.elf"
         cp "${SCRIPT_ROOT}/menu.lst" \
-            "${ESP_DIR}/oem/grub/menu.lst"
+            "${ESP_DIR}/grub/menu.lst"
         ;;
 esac
 
