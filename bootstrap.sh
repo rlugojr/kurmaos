@@ -31,9 +31,9 @@ function download() {
 download 04724c41cf9625c3e2fe3d615ea64d775905c2a304c1e5d3244e693bdfe47e43 \
          "output/kurmaos-stage3.cntmp" \
          "https://s3.amazonaws.com/kurmaos-artifacts/stage3/kurmaos-stage3-20150416.cntmp"
-download 02d8d93a5e302283a86976dd9c95ebd59bee42f81726560a9361e55aa39e334c \
+download 10d1d6b20e54299ca5f5f0b16839d52bad94cea766339df900f2e10624d3c832 \
          "output/kurmaos-gentoo-stage4.cntmp" \
-         "https://s3.amazonaws.com/kurmaos-artifacts/stage4/kurmaos-gentoo-stage4-20150429.cntmp"
+         "https://s3.amazonaws.com/kurmaos-artifacts/stage4/kurmaos-gentoo-stage4-20150505.cntmp"
 download 1be4114c38c92986df2f30156056869713864b35d7b24e5e9ccc477e197ef83f \
          "output/kurmaos-gentoo-kernel.cntmp" \
          "https://s3.amazonaws.com/kurmaos-artifacts/kernel/kurmaos-gentoo-kernel-4.0.1.cntmp"
