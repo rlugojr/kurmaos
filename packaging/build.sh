@@ -13,7 +13,6 @@ touch ../output/images/raw.img
 echo "Building"
 sudo chroot ./chroot /bin/bash <<EOF
 source /etc/profile
-
 cd kurmaos/packaging
 
 ./lib/disk_util --disk_layout=base format ../output/images/raw.img

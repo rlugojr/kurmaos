@@ -94,6 +94,7 @@ error() {
 
 function cleanup_chroot() {
     echo "Cleaning up"
+    set +e
     mount | grep "${SCRIPT_ROOT}/chroot" | awk '{print $3}' | sort -r | xargs -n1 sudo umount
 }
 

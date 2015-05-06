@@ -3,7 +3,7 @@
 SCRIPT_ROOT=$(readlink -f $(dirname "$0"))
 . "${SCRIPT_ROOT}/lib/common.sh" || exit 1
 
-OUTPUT_PATH="../output/images/vmware"
+OUTPUT_PATH="../output/images/vagrant_vmware"
 
 setup_chroot
 
@@ -15,6 +15,12 @@ echo "Generating"
 sudo chroot ./chroot /bin/bash <<EOF
 source /etc/profile
 cd kurmaos/packaging
+
+./lib/disk_util --disk_layout=base mount $OUTPUT_PATH/vmware.bin /tmp/rootfs
+cp oem_vagrant.json /tmp/rootfs/boot/oem/kurma_oem.json
+./lib/disk_util umount /tmp/rootfs
+
+./lib/disk_util --disk_layout=vm update $OUTPUT_PATH/vmware.bin
 
 qemu-img convert -f raw $OUTPUT_PATH/vmware.bin -O vmdk -o adapter_type=lsilogic $OUTPUT_PATH/kurmaos.vmdk
 rm $OUTPUT_PATH/vmware.bin
@@ -62,5 +68,7 @@ EOF
 
 (
     cd $OUTPUT_PATH
-    zip -9 kurmaos-vmware.zip kurmaos.vmx kurmaos.vmdk
+    touch Vagrantfile
+    echo '{"provider":"vmware_desktop"}' > metadata.json
+    tar -czf kurmaos-vagrant-vmware.box Vagrantfile metadata.json kurmaos.vmx kurmaos.vmdk
 )
