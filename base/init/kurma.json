@@ -4,7 +4,7 @@
   "parent_cgroup_name": "kurma",
   "required_namespaces": ["ipc", "mount", "pid", "uts" ],
   "disks": [
-    { "device": "LABEL=ROOT", "usage":  [ "pods", "volumes" ] }
+    { "device": "LABEL=ROOT", "usage":  [ "pods", "volumes" ], "resize": true }
   ],
   "network_config": {
     "interfaces": [
