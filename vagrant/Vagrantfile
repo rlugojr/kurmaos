@@ -1,26 +1,35 @@
 Vagrant.configure(2) do |config|
-  config.vm.box   = "kurmaos"
+  config.vm.box     = "kurmaos"
+  config.vm.box_url = "file://../output/images/vagrant_vmware/kurmaos-vagrant-vmware.box"
+
+  # We will fake the machine appearing as Tiny Core Linux so that Vagrant won't
+  # error out on configuring the network.
+  config.vm.guest = :tinycore
 
   # SSH configuration
-  config.ssh.username      = "root"
-  config.ssh.forward_agent = true
+  config.ssh.username       = "root"
+  config.ssh.forward_agent  = true
+  config.ssh.shell          = "/bin/sh"
 
-  # Port forwarding... order is VM port first, then the Host port
-  #config.vm.network :forwarded_port, guest:  80, host: 7070
+  # Currently, we'll disable the default vagrant synced folder. The default is
+  # to use hgfs, however the kernel module for the tools isn't included.
+  config.vm.synced_folder ".", "/vagrant", disabled: true
 
   ## PROVIDER
   #
-  # vmware_fusion
+  # vmware_fusion / vmware_workstation
   config.vm.provider :vmware_fusion do |v|
     v.gui = false
     v.vmx["displayName"] = "kurmaos"
     v.vmx["numvcpus"]    = "4"
     v.vmx["memsize"]     = "2048"
+    v.vmx['ethernet0.virtualDev'] = 'vmxnet3'
   end
-  config.vm.provider :vmware_desktop do |v|
+  config.vm.provider :vmware_workstation do |v|
     v.gui = false
     v.vmx["displayName"] = "kurmaos"
     v.vmx["numvcpus"]    = "4"
     v.vmx["memsize"]     = "2048"
+    v.vmx['ethernet0.virtualDev'] = 'vmxnet3'
   end
 end
