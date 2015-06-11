@@ -34,9 +34,9 @@ download 04724c41cf9625c3e2fe3d615ea64d775905c2a304c1e5d3244e693bdfe47e43 \
 download 10d1d6b20e54299ca5f5f0b16839d52bad94cea766339df900f2e10624d3c832 \
          "output/kurmaos-gentoo-stage4.cntmp" \
          "https://s3.amazonaws.com/kurmaos-artifacts/stage4/kurmaos-gentoo-stage4-20150505.cntmp"
-download 1be4114c38c92986df2f30156056869713864b35d7b24e5e9ccc477e197ef83f \
+download 47225abc8de4e5ddef9ccc1fa9923ca6f24392cdcdf563563a8c12f16eac7ad9 \
          "output/kurmaos-gentoo-kernel.cntmp" \
-         "https://s3.amazonaws.com/kurmaos-artifacts/kernel/kurmaos-gentoo-kernel-4.0.1.cntmp"
+         "https://s3.amazonaws.com/kurmaos-artifacts/kernel/kurmaos-gentoo-kernel-4.0.5.cntmp"
 apc import -s -o \
     output/kurmaos-stage3.cntmp \
     output/kurmaos-gentoo-stage4.cntmp \
