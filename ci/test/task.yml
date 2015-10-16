@@ -1,0 +1,11 @@
+---
+platform: linux
+
+image: docker:///apcera/kurmaos-stage4
+
+inputs:
+  - name: kurma-source
+  - name: kurmaos-source
+
+run:
+  path: kurmaos-source/ci/test/test.sh

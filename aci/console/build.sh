@@ -1,60 +1,50 @@
-#!/bin/sh
+#!/bin/bash
 
-set -e
-set -x
+BASE_PATH=`pwd`
+set -e -x
 
-BASEPATH=`pwd`
+mkdir -p go/src/github.com/apcera
+ln -s $BASE_PATH/kurma-source go/src/github.com/apcera/kurma
+export GOPATH="$BASE_PATH/go:$BASE_PATH/kurma-source/Godeps/_workspace"
+TARGET=$BASE_PATH/go/src/github.com/apcera/kurma
 
-sudo rm -rf tmp
-mkdir -p tmp
+# extract the root
+mkdir root
+tar -xf buildroot-base/buildroot.tar.gz -C root
 
-# download
-(
-    cd $BASEPATH/tmp
-    wget http://buildroot.uclibc.org/downloads/buildroot-2015.02.tar.gz
-    tar xzf buildroot-2015.02.tar.gz
-)
+# configure and build the spawner
+cp kurmaos-source/images/console/spawn.json root/etc/spawn.conf
+cp kurmaos-source/images/console/start.sh root/start.sh
+chown 0:0 root/etc/spawn.conf root/start.sh
+chmod a+x root/start.sh
+go build -a -o root/sbin/spawn apcera-util-source/spawn/spawn.go
 
-# compile buildroot
-(
-    cd $BASEPATH/tmp/buildroot-2015.02
-    cp $BASEPATH/configs/buildroot.config .config
-    cp $BASEPATH/configs/busybox.config busybox.config
-    cp $BASEPATH/configs/kernel.config kernel.config
-    cp $BASEPATH/configs/isolinux.cfg isolinux.cfg
-    time make
-)
+# get kurma-cli
+tar -xf kurma-cli-linux-amd64/kurma-cli-linux-amd64.tar.gz -C kurma-cli-linux-amd64
+cp kurma-cli-linux-amd64/kurma-cli root/usr/bin/kurma-cli
 
-# copy out the kernel and cpio image
-sudo rm -rf output ; mkdir -p output
-cp $BASEPATH/tmp/buildroot-2015.02/output/images/rootfs.cpio* output/
-cp $BASEPATH/tmp/buildroot-2015.02/output/images/rootfs.iso9660 output/
-cp $BASEPATH/tmp/buildroot-2015.02/output/images/bzImage output/
+# generate the aci
+cd $BASE_PATH
+acbuild begin
+for i in $BASE_PATH/root/* ; do
+    j=$(basename $i)
+    acbuild copy $i $j
+done
 
-# split out the kernel modules from the rootfs
-(
-    cd $BASEPATH/tmp
-    sudo mkdir root
-    sudo tar xzf buildroot-2015.02/output/images/rootfs.tar.gz -C root
-    cd root
-    sudo tar czf $BASEPATH/output/modules.tar.gz lib/modules lib/firmware
-    sudo rm -rf lib/modules lib/firmware
-    sudo tar czf $BASEPATH/output/rootfs.tar.gz .
-)
+acbuild label add os linux
+acbuild label add version latest
 
-# process the devfs
-(
-    mkdir $BASEPATH/tmp/host
-    cd $BASEPATH/tmp/host
-    sudo rsync -a $BASEPATH/tmp/buildroot-2015.02/output/host/* .
-    sudo chown -R root:root .
-    sudo ln -s x86_64-buildroot-linux-gnu-gcc usr/bin/gcc
-    # grub-mkimage needs lzma, but it isnt in buildroot, it uses the host
-    sudo cp /usr/lib/liblzma.so.5 usr/lib/
-    sudo cp /usr/lib/libstdc++.so.6 usr/lib/
-    sudo tar czf $BASEPATH/output/devfs.tar.gz *
-)
+acbuild environment add PATH "/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
 
+acbuild set-exec /start.sh
+acbuild set-user 0
+acbuild set-group 0
+acbuild set-name apcera.com/kurma/console
 
+# add our custom isolators
+jq -c -s '.[0] * .[1]' .acbuild/currentaci/manifest kurmaos-source/images/console/isolator.json > manifest
+mv manifest .acbuild/currentaci/manifest
 
-#sudo rm -rf tmp
+acbuild end console.aci
+gzip console.aci
+mv console.aci.gz console.aci

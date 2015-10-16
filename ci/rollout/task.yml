@@ -1,0 +1,16 @@
+---
+platform: linux
+
+image: docker:///apcera/kurmaos-stage4
+
+inputs:
+  - name: version
+  - name: kurmaos-source
+  - name: kurma-cli-linux-amd64
+  - name: kurma-cli-darwin-amd64
+  - name: kurma-server-linux-amd64
+  - name: disk-vmware-image
+  - name: disk-virtualbox-image
+
+run:
+  path: kurmaos-source/ci/rollout/prep.sh
