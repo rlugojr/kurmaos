@@ -10,53 +10,54 @@ The latest release images can be found under [Releases](https://github.com/apcer
 ### Build Process
 
 KurmaOS uses Gentoo as the base OS for the build environment. Gentoo has several
-advantages, including being up-to-date, vanilla, and bare bones. Gentoo is ideal for pulling
-and building on a minimal image.
+advantages, including being up-to-date, vanilla, and bare bones. Gentoo is ideal
+for pulling and building on a minimal image.
 
-The Kurma build process leverages the [Apcera package build scripts](https://github.com/apcera/continuum-package-scripts).
-This provides you with a way to script the building of Kurma and an efficient mechanism for building
-containers concurrently (such as on a full cluster). The Kurma build process also allows you to build Apcera Continuum from a
-local virtual machine using one of the [trial images](https://www.apcera.com/getstarted/). This allows you to
-compile everything on a Linux virtual machine even if you're on a Mac or Windows host.
+The Kurma build process leverages a set of Docker images as follows:
 
-The steps to build a base Kurma image are as follows:
+* `apcera/kurmaos-stage3` - This is the stock Gentoo stage3 image based on the
+  `gentoo/stage3-amd64` Docker image. The upstream image is updated regularly
+  and not tagged, so we clone it to our own to ensure consistency over time.
+* `apcera/kurmaos-stage4` - This represents a layer on top of the Gentoo system
+  which includes all of the necessary tooling for building Kurma and generating
+  images.
+* `apcera/kurmaos-kernel` - This image represents the current kernel used in
+  KurmaOS images.
 
-1. Take an existing stage3 image and add in what is necessary for your build
-   environment. This becomes what we call a stage4 image.
-1. Take the stage4 image and generate another image which includes a
-   pre-compiled kernel.
-1. Generate some of the necessary base ACI images, such as for NTP or the
-   console. These are all based on the stage4 image.
-1. Upload your local source and the needed base ACI images to be compiled into
-   the kurma initrd image.
-1. Run packer to generate a virtual machine or vagrant image, ready to go.
+On top of these base images, there are three other categories of builds:
 
-After this, you are all set.
-
-The artifacts of steps 1-3 can all be managed by Apcera, so that during
-the course of normal development, you only need to complete steps 4-5.
-For more information on steps 1-3, refer to the [Kurma repository readme](https://github.com/apcera/kurma).
-
-Steps 4 and 5 have some distinctions between a development build and a release
-build. A development build is very quick and will output a tarball containing the kernel
-(`bzImage`) and the `initrd` image. A production release will generate a kernel which has
-the `initrd` image embedded in it. However, this involves recompiling the kernel which makes
-for a longer iteration time. The benefit of this is that the production release
-involves updating only a single file.
+* ACI images which go into the base images for system services and utilities.
+  * `aci/buildroot` - This builds the Buildroot base tarball used by the stock
+    console image.
+  * `aci/console` - This builds the Buildroot-based console. This is separate
+    from building Buildroot so that it is easily repeatable. It bundles in the
+    Kurma CLI and generates the ready to use ACI from the existing Buildroot
+    rootfs tarball.
+  * `aci/kurma-api` - This is an ACI image which includes the kurma-api process
+    which acts as a remotely accessible API for launching containers on a
+    KurmaOS machine.
+  * `aci/ntp` - This is an ACI for the ntp client to keep the time on a host in
+    sync.
+* Compilation of Kurma components, such as the kurmaos-initrd image, CLI, and
+  plain kurma-server binary.
+  * `code/kurma-cli` - This build generates the Kurma CLI.
+  * `code/kurma-init` - This build compiles the `kurma-init` process and bundles
+    it into a tarball with the current kernel bzImage and the boot disk initrd.
+  * `code/kurma-server` - This build generates the standalone `kurma-server`
+    daemon.
+* VM generation for common platforms, such as VMware, Virtualbox, OpenStack, and
+  more.
+  * `packaging/kurmaos-disk` - This build takes the `kurma-init` asset of a
+    bzImage and initrd image and converts it into a raw partitioned disk
+    image. This can then be converted and tailored for each VM environment.
+  * `packaging/disk-virtualbox` - This build converts the raw disk image into a
+    Virtualbox image.
+  * `packaging/disk-vmware` - This build converts the raw disk image into a
+    VMWare image.
 
 ### Getting Started
 
-To get started with building Kurma for KurmaOS, you likely want to start by using
-existing images for build steps 1, 2, 3. You can do these steps if you
-want, but generally they're updated when it is necessary to update
-library dependencies, the base build environment, or kernel versions.
-
-To get started with the latest official images for steps 1, 2, and 3, use the
-included `bootstrap.sh` script.
-
-The bootstrap script will download the latest assets and load them into your
-Continuum cluster. It will also download the latest system ACI images and put
-them in our `output/` folder.
+TBD, document the new Docker based build process.
 
 ### Tooling
 
@@ -69,18 +70,3 @@ The following pieces make up the build environment:
 * `output/` is where the scripts will look for local build artifacts.
 * `vagrant/` provides a way to quickly bring up a virtual machine running
   KurmaOS from a step 5 output. *(not yet finished)*
-
-### NOTE WHEN BUILDING PRE-STEP 4
-
-If you are building steps 2 or 3, it is necessary to modify the
-attributes of the compiler stager on the system. The `emerge-webrsync` call uses
-up a lot of storage, and won't fit with the stock disk allocation. For some of
-the compilation, we recommend upping the default memory. Currently,
-there is no way to specify how much memory or disk the stager should have
-using the package build scripts.
-
-The following commands will update the resources settings. It is recommended to only do this with the trial image.
-
-```
-$ apc job update /apcera/stagers::compiler --memory 1gb --disk 10gb
-```

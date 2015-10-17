@@ -1,0 +1,673 @@
+# Kurma Concourse Pipeline
+#
+# This is a build pipleline for end to end testing and packaging of Kurma. It is
+# using Concourse (http://concourse.ci) for a fully containerized build
+# pipeline.
+
+groups:
+- name: code
+  jobs:
+  - ci
+  - kurma-init
+  - kurma-api-aci
+  - kurma-cli
+  - kurma-server
+  - rc
+- name: base
+  jobs:
+  - kurmaos-stage3
+  - kurmaos-stage4
+  - kurmaos-kernel
+  - kurma-init
+- name: acis
+  jobs:
+  - buildroot
+  - ntp-aci
+  - kurma-api-aci
+  - kurma-cli
+  - console-aci
+  - kurma-init
+- name: machines
+  jobs:
+  - kurmaos-disk
+  - disk-vmware
+  - disk-virtualbox
+- name: ship
+  jobs:
+  - ci
+  - major
+  - minor
+  - patch
+  - rc
+  - rollout
+  - shipit
+  - github-it
+
+jobs:
+
+- name: ci
+  plan:
+  - aggregate:
+    - get: kurmaos-stage4-image
+      passed: [ kurmaos-stage4 ]
+      params:
+        skip_download: true
+    - get: kurma-source
+      trigger: true
+    - get: kurmaos-source
+  - task: test
+    file: kurmaos-source/ci/test/task.yml
+    privileged: true
+
+- name: kurmaos-stage3
+  serial: true
+  plan:
+  - aggregate:
+    - task: tag-date
+      config:
+        platform: linux
+        image: "docker:///busybox"
+        run:
+          path: /bin/sh
+          args:
+            - "-c"
+            - "date +%Y%m%d > image-tag && cat image-tag"
+  - put: kurmaos-stage3-image
+    params:
+      pull_repository: gentoo/stage3-amd64
+      tag: tag-date/image-tag
+    get_params:
+      skip_download: true
+  - put: kurmaos-stage3-image
+    params:
+      pull_repository: gentoo/stage3-amd64
+    get_params:
+      skip_download: true
+
+- name: kurmaos-stage4
+  serial: true
+  plan:
+  - aggregate:
+    - get: kurmaos-stage3-image
+      passed: [ kurmaos-stage3 ]
+      trigger: true
+      params:
+        skip_download: true
+    - get: kurmaos-source
+  - task: tag-date
+    config:
+      platform: linux
+      image: "docker:///concourse/busyboxplus#git"
+      inputs:
+        - name: kurmaos-source
+      run:
+        path: /bin/sh
+        args:
+          - "-c"
+          - "date +%Y%m%d-`cd kurmaos-source && git rev-parse HEAD | cut -c1-8` > image-tag && cat image-tag"
+  - put: kurmaos-stage4-image
+    params:
+      build: kurmaos-source/docker/kurmaos-stage4
+    get_params:
+      skip_download: true
+  - put: kurmaos-stage4-image
+    params:
+      pull_repository: apcera/kurmaos-stage4
+      tag: tag-date/image-tag
+    get_params:
+      skip_download: true
+
+- name: kurmaos-kernel
+  serial: true
+  plan:
+  - aggregate:
+    - get: kurmaos-stage4-image
+      passed: [ kurmaos-stage4 ]
+      trigger: true
+      params:
+        skip_download: true
+    - get: kurmaos-source
+  - task: tag-date
+    config:
+      platform: linux
+      image: "docker:///concourse/busyboxplus#git"
+      inputs:
+        - name: kurmaos-source
+      run:
+        path: /bin/sh
+        args:
+          - "-c"
+          - "date +%Y%m%d-`cd kurmaos-source && git rev-parse HEAD | cut -c1-8` > image-tag && cat image-tag"
+  - put: kurmaos-kernel-image
+    params:
+      build: kurmaos-source/docker/kurmaos-kernel
+    get_params:
+      skip_download: true
+  - put: kurmaos-kernel-image
+    params:
+      pull_repository: apcera/kurmaos-kernel
+      tag: tag-date/image-tag
+    get_params:
+      skip_download: true
+
+- name: ntp-aci
+  plan:
+    - get: kurmaos-stage4-image
+      passed: [ kurmaos-stage4 ]
+      params:
+        skip_download: true
+    - get: kurmaos-source
+    - task: build
+      file: kurmaos-source/aci/ntp/task.yml
+    - put: ntp-aci-image
+      params:
+        from: ntp.aci
+- name: kurma-api-aci
+  plan:
+    - aggregate:
+      - get: kurmaos-stage4-image
+        passed: [ kurmaos-stage4 ]
+        params:
+          skip_download: true
+      - get: kurmaos-source
+      - get: kurma-source
+        passed: [ rc ]
+    - task: build
+      file: kurmaos-source/aci/kurma-api/task.yml
+    - put: kurma-api-aci-image
+      params:
+        from: kurma-api.aci
+- name: buildroot
+  plan:
+    - aggregate:
+      - get: kurmaos-stage4-image
+        passed: [ kurmaos-stage4 ]
+        params:
+          skip_download: true
+      - get: kurmaos-source
+    - task: build
+      file: kurmaos-source/aci/buildroot/task.yml
+    - put: buildroot-base
+      params:
+        from: buildroot.tar.gz
+- name: console-aci
+  plan:
+    - aggregate:
+      - get: buildroot-base
+        passed: [ buildroot ]
+      - get: kurma-cli-linux-amd64
+        passed: [ kurma-cli ]
+      - get: kurma-source
+        passed: [ rc ]
+      - get: kurmaos-source
+      - get: apcera-util-source
+    - task: build
+      file: kurmaos-source/aci/console/task.yml
+    - put: console-aci-image
+      params:
+        from: console.aci
+
+- name: kurma-server
+  plan:
+  - aggregate:
+    - get: kurmaos-stage4-image
+      passed: [ kurmaos-stage4 ]
+      params:
+        skip_download: true
+    - get: kurma-source
+      passed: [ rc ]
+    - get: kurmaos-source
+  - task: build
+    file: kurmaos-source/code/kurma-server/task.yml
+  - put: kurma-server-linux-amd64
+    params:
+      from: kurma-server-linux-amd64.tar.gz
+
+- name: kurma-cli
+  plan:
+  - aggregate:
+    - get: kurmaos-stage4-image
+      passed: [ kurmaos-stage4 ]
+      params:
+        skip_download: true
+    - get: kurma-source
+      passed: [ rc ]
+    - get: kurmaos-source
+  - aggregate:
+    - task: linux
+      file: kurmaos-source/code/kurma-cli/task-linux.yml
+    - task: darwin
+      file: kurmaos-source/code/kurma-cli/task-darwin.yml
+  - aggregate:
+    - put: kurma-cli-linux-amd64
+      params:
+        from: linux/kurma-cli-linux-amd64.tar.gz
+    - put: kurma-cli-darwin-amd64
+      params:
+        from: darwin/kurma-cli-darwin-amd64.tar.gz
+
+- name: kurma-init
+  plan:
+    - aggregate:
+      - get: kurmaos-kernel-image
+        passed: [ kurmaos-kernel ]
+        trigger: true
+        params:
+          skip_download: true
+      - get: ntp-aci-image
+        passed: [ ntp-aci ]
+      - get: console-aci-image
+        passed: [ console-aci ]
+      - get: kurma-api-aci-image
+        passed: [ kurma-api-aci ]
+      - get: kurma-source
+        passed: [ rc, kurma-api-aci, console-aci ]
+        trigger: true
+      - get: kurmaos-source
+        passed: [ rc, kurmaos-kernel, ntp-aci ]
+    - task: build
+      file: kurmaos-source/code/kurma-init/task.yml
+    - put: kurma-init-build
+      params:
+        from: kurma-init.tar.gz
+
+- name: kurmaos-disk
+  serial: true
+  plan:
+    - aggregate:
+      - get: kurma-init-build
+        passed: [ kurma-init ]
+        trigger: true
+      - get: kurmaos-source
+    - task: build
+      file: kurmaos-source/packaging/kurmaos-disk/task.yml
+      privileged: true
+    - put: kurmaos-disk-image
+      params:
+        from: raw.img.gz
+
+- name: disk-vmware
+  plan:
+    - aggregate:
+      - get: kurmaos-disk-image
+        passed: [ kurmaos-disk ]
+        trigger: true
+      - get: kurmaos-source
+    - task: build
+      file: kurmaos-source/packaging/disk-vmware/task.yml
+    - put: disk-vmware-image
+      params:
+        from: kurmaos.zip
+
+- name: disk-virtualbox
+  plan:
+    - aggregate:
+      - get: kurmaos-disk-image
+        passed: [ kurmaos-disk ]
+        trigger: true
+      - get: kurmaos-source
+    - task: build
+      file: kurmaos-source/packaging/disk-virtualbox/task.yml
+    - put: disk-virtualbox-image
+      params:
+        from: kurmaos.zip
+
+- name: rollout
+  serial: true
+  plan:
+  - aggregate:
+    - get: version
+      passed: [ shipit ]
+      trigger: true
+    - get: kurma-source
+      passed: [ shipit ]
+    - get: kurmaos-source
+      passed: [ shipit ]
+    - get: kurma-cli-linux-amd64
+      passed: [ shipit ]
+    - get: kurma-cli-darwin-amd64
+      passed: [ shipit ]
+    - get: kurma-server-linux-amd64
+      passed: [ shipit ]
+    - get: disk-vmware-image
+      passed: [ shipit ]
+    - get: disk-virtualbox-image
+      passed: [ shipit ]
+  - task: prep
+    file: kurmaos-source/ci/rollout/task.yml
+  - aggregate:
+    - put: release-kurma-server-linux-amd64
+      params:
+        from: prep/kurma-server-(.*)-linux-amd64.tar.gz
+        to: server/
+    - put: release-kurma-cli-linux-amd64
+      params:
+        from: prep/kurma-cli-(.*)-linux-amd64.tar.gz
+        to: cli/
+    - put: release-kurma-cli-darwin-amd64
+      params:
+        from: prep/kurma-cli-(.*)-darwin-amd64.tar.gz
+        to: cli//
+    - put: release-kurmaos-vmware
+      params:
+        from: prep/kurmaos-vmware-(.*).zip
+        to: vm/vmware/
+    - put: release-kurmaos-virtualbox
+      params:
+        from: prep/kurmaos-virtualbox-(.*).zip
+        to: vm/virtualbox/
+
+- name: github-it
+  plan:
+  - aggregate:
+    - get: version
+      passed: [ rollout ]
+      trigger: true
+    - get: release-kurma-server-linux-amd64
+      passed: [ rollout ]
+    - get: release-kurma-cli-linux-amd64
+      passed: [ rollout ]
+    - get: release-kurma-cli-darwin-amd64
+      passed: [ rollout ]
+    - get: release-kurmaos-vmware
+      passed: [ rollout ]
+    - get: release-kurmaos-virtualbox
+      passed: [ rollout ]
+  - task: prep
+    config:
+      platform: linux
+      image: "docker:///busybox"
+      run:
+        path: /bin/sh
+        args:
+        - "-c"
+        - "echo v`cat version/number` release_name && cat release_name"
+  - aggregate:
+    - put: kurma-release
+      params:
+        name: prep/release_name
+        tag: version/number
+        globs:
+        - "prep/*.tar.gz"
+        - "prep/*.zip"
+    - put: kurmaos-release
+      params:
+        name: prep/release_name
+        tag: version/number
+        globs:
+        - "prep/*.tar.gz"
+        - "prep/*.zip"
+
+- name: shipit
+  serial_groups: [ version ]
+  plan:
+  - aggregate:
+    - get: version
+      params: { bump: final }
+    - get: kurma-source
+      passed: [ rc ]
+    - get: kurmaos-source
+      passed: [ rc ]
+    - get: kurma-cli-linux-amd64
+      passed: [ kurma-cli ]
+    - get: kurma-cli-darwin-amd64
+      passed: [ kurma-cli ]
+    - get: kurma-server-linux-amd64
+      passed: [ kurma-server ]
+    - get: disk-vmware-image
+      passed: [ disk-vmware ]
+    - get: disk-virtualbox-image
+      passed: [ disk-virtualbox ]
+  - aggregate:
+    - put: version
+      params: { file: version/number }
+    - put: kurma-source
+      params:
+        repository: kurma-source
+        tag: version/number
+    - put: kurmaos-source
+      params:
+        repository: kurmaos-source
+        tag: version/number
+- name: rc
+  public: true
+  serial_groups: [ version ]
+  plan:
+  - get: kurma-source
+    passed: [ ci ]
+    trigger: true
+  - get: kurmaos-source
+    trigger: true
+  - get: version
+    params: { pre: rc }
+  - put: version
+    params: { file: version/number }
+- name: major
+  public: true
+  serial_groups: [ version ]
+  plan:
+  - get: version
+    params: { bump: major, pre: rc }
+  - put: version
+    params: { file: version/number }
+- name: minor
+  public: true
+  serial_groups: [ version ]
+  plan:
+  - get: version
+    params: { bump: minor, pre: rc }
+  - put: version
+    params: { file: version/number }
+- name: patch
+  public: true
+  serial_groups: [ version ]
+  plan:
+  - get: version
+    passed: [ shipit ]
+    params: { bump: patch, pre: rc }
+    trigger: true
+  - put: version
+    params: { file: version/number }
+
+resources:
+  # Version tracking
+- name: version
+  type: semver
+  source:
+    bucket: kurmaos-artifacts
+    region_name: us-west-2
+    key: current-version
+    access_key_id: {{aws-access-key}}
+    secret_access_key: {{aws-secret-key}}
+
+  # Docker Images
+  #
+  # These represent the main layers of the Gentoo base. Stage3 is the stock
+  # Gentoo stage3 tarball, which we'll copy to our own image to ensure it stays
+  # consistent. Stage4 is a set of packages installed on top of the stage3 we'll
+  # need for compilation. Kernel contains the built kernel that the OS images
+  # will use.
+- name: kurmaos-stage3-image
+  type: docker-image
+  source:
+    repository: apcera/kurmaos-stage3
+    username: {{docker-username}}
+    email: {{docker-email}}
+    password: {{docker-password}}
+- name: kurmaos-stage4-image
+  type: docker-image
+  source:
+    repository: apcera/kurmaos-stage4
+    username: {{docker-username}}
+    email: {{docker-email}}
+    password: {{docker-password}}
+- name: kurmaos-kernel-image
+  type: docker-image
+  source:
+    repository: apcera/kurmaos-kernel
+    username: {{docker-username}}
+    email: {{docker-email}}
+    password: {{docker-password}}
+
+  # Git Sources
+  #
+  # The primary source repositories for Kurma.
+- name: kurma-source
+  type: git
+  source:
+    uri: git@github.com:apcera/kurma.git
+    branch: master
+    private_key: {{github-write-private-key}}
+- name: kurmaos-source
+  type: git
+  source:
+    uri: git@github.com:apcera/kurmaos.git
+    branch: master
+    private_key: {{github-write-private-key}}
+- name: apcera-util-source
+  type: git
+  source:
+    uri: https://github.com/apcera/util.git
+
+  # Build Artifacts
+- name: buildroot-base
+  type: s3
+  source:
+    bucket: kurmaos-artifacts
+    region_name: us-west-2
+    access_key_id: {{aws-access-key}}
+    secret_access_key: {{aws-secret-key}}
+    versioned_file: aci/buildroot.tar.gz
+- name: ntp-aci-image
+  type: s3
+  source:
+    bucket: kurmaos-artifacts
+    region_name: us-west-2
+    access_key_id: {{aws-access-key}}
+    secret_access_key: {{aws-secret-key}}
+    versioned_file: aci/ntp.aci
+- name: kurma-api-aci-image
+  type: s3
+  source:
+    bucket: kurmaos-artifacts
+    region_name: us-west-2
+    access_key_id: {{aws-access-key}}
+    secret_access_key: {{aws-secret-key}}
+    versioned_file: aci/kurma-api.aci
+- name: console-aci-image
+  type: s3
+  source:
+    bucket: kurmaos-artifacts
+    region_name: us-west-2
+    access_key_id: {{aws-access-key}}
+    secret_access_key: {{aws-secret-key}}
+    versioned_file: aci/console.aci
+- name: kurma-server-linux-amd64
+  type: s3
+  source:
+    bucket: kurmaos-artifacts
+    region_name: us-west-2
+    access_key_id: {{aws-access-key}}
+    secret_access_key: {{aws-secret-key}}
+    versioned_file: kurma-server-linux-amd64.tar.gz
+- name: kurma-cli-linux-amd64
+  type: s3
+  source:
+    bucket: kurmaos-artifacts
+    region_name: us-west-2
+    access_key_id: {{aws-access-key}}
+    secret_access_key: {{aws-secret-key}}
+    versioned_file: cli/kurma-cli-linux-amd64.tar.gz
+- name: kurma-cli-darwin-amd64
+  type: s3
+  source:
+    bucket: kurmaos-artifacts
+    region_name: us-west-2
+    access_key_id: {{aws-access-key}}
+    secret_access_key: {{aws-secret-key}}
+    versioned_file: cli/kurma-cli-darwin-amd64.tar.gz
+- name: kurma-init-build
+  type: s3
+  source:
+    bucket: kurmaos-artifacts
+    region_name: us-west-2
+    access_key_id: {{aws-access-key}}
+    secret_access_key: {{aws-secret-key}}
+    versioned_file: kurma-init.tar.gz
+- name: kurmaos-disk-image
+  type: s3
+  source:
+    bucket: kurmaos-artifacts
+    region_name: us-west-2
+    access_key_id: {{aws-access-key}}
+    secret_access_key: {{aws-secret-key}}
+    versioned_file: disks/kurmaos-disk.img.gz
+- name: disk-vmware-image
+  type: s3
+  source:
+    bucket: kurmaos-artifacts
+    region_name: us-west-2
+    access_key_id: {{aws-access-key}}
+    secret_access_key: {{aws-secret-key}}
+    versioned_file: disks/kurmaos-vmware.zip
+- name: disk-virtualbox-image
+  type: s3
+  source:
+    bucket: kurmaos-artifacts
+    region_name: us-west-2
+    access_key_id: {{aws-access-key}}
+    secret_access_key: {{aws-secret-key}}
+    versioned_file: disks/kurmaos-virtualbox.zip
+
+  # Release Assets
+  #
+  # These are the assets we store for shipped releases.
+- name: release-kurma-server-linux-amd64
+  type: s3
+  source:
+    bucket: kurmaos-releases
+    access_key_id: {{aws-access-key}}
+    secret_access_key: {{aws-secret-key}}
+    regexp: server/kurma-server-(.*)-linux-amd64.tar.gz
+- name: release-kurma-cli-linux-amd64
+  type: s3
+  source:
+    bucket: kurmaos-releases
+    access_key_id: {{aws-access-key}}
+    secret_access_key: {{aws-secret-key}}
+    regexp: cli/kurma-cli-(.*)-linux-amd64.tar.gz
+- name: release-kurma-cli-darwin-amd64
+  type: s3
+  source:
+    bucket: kurmaos-releases
+    access_key_id: {{aws-access-key}}
+    secret_access_key: {{aws-secret-key}}
+    regexp: cli/kurma-cli-(.*)-darwin-amd64.tar.gz
+- name: release-kurmaos-vmware
+  type: s3
+  source:
+    bucket: kurmaos-releases
+    access_key_id: {{aws-access-key}}
+    secret_access_key: {{aws-secret-key}}
+    regexp: vm/vmware/kurmaos-vmware-(.*).zip
+- name: release-kurmaos-virtualbox
+  type: s3
+  source:
+    bucket: kurmaos-releases
+    access_key_id: {{aws-access-key}}
+    secret_access_key: {{aws-secret-key}}
+    regexp: vm/virtualbox/kurmaos-virtualbox-(.*).zip
+
+  # Github Releases
+- name: kurma-release
+  type: github-release
+  source:
+    user: apcera
+    repository: kurma
+    access_token: {{github-access-token}}
+- name: kurmaos-release
+  type: github-release
+  source:
+    user: apcera
+    repository: kurmaos
+    access_token: {{github-access-token}}

@@ -57,7 +57,9 @@ esac
 # using a single loop device with partitions there is no such cleanup.
 # That's the story of why this script has all this goo for loop and mount.
 ESP_DIR=
-LOOP_DEV=
+# LOOP_DEV=
+LOOP_DEV0=
+LOOP_DEV1=
 
 cleanup() {
     if [[ -d "${ESP_DIR}" ]]; then
@@ -66,35 +68,22 @@ cleanup() {
         fi
         rm -rf "${ESP_DIR}"
     fi
-    if [[ -b "${LOOP_DEV}" ]]; then
-        losetup --detach "${LOOP_DEV}"
+    if [[ -b "${LOOP_DEV1}" ]]; then
+        losetup --detach "${LOOP_DEV0}"
+    fi
+    if [[ -b "${LOOP_DEV0}" ]]; then
+        losetup --detach "${LOOP_DEV1}"
     fi
 }
 trap cleanup EXIT
 
 info "Installing GRUB ${FLAGS_target} in ${FLAGS_disk_image##*/}"
-LOOP_DEV=$(losetup --find --show --partscan "${FLAGS_disk_image}")
+LOOP_DEV0=$(losetup --find --show "${FLAGS_disk_image}")
+PART1_OFFSET=`expr $(partx -gn 1 -o START "${FLAGS_disk_image}") \* 512`
+LOOP_DEV1=$(losetup --find --show --offset ${PART1_OFFSET} ${LOOP_DEV0})
 ESP_DIR=$(mktemp --directory)
 
-# work around slow/buggy udev, make sure the node is there before mounting
-if [[ ! -b "${LOOP_DEV}p1" ]]; then
-    # sleep a little just in case udev is ok but just not finished yet
-    warn "loopback device node ${LOOP_DEV}p1 missing, waiting on udev..."
-    sleep 0.5
-    for (( i=0; i<5; i++ )); do
-        if [[ -b "${LOOP_DEV}p1" ]]; then
-            break
-        fi
-        warn "looback device node still ${LOOP_DEV}p1 missing, reprobing..."
-        blockdev --rereadpt ${LOOP_DEV}
-        sleep 0.5
-    done
-    if [[ ! -b "${LOOP_DEV}p1" ]]; then
-        failboat "${LOOP_DEV}p1 where art thou? udev has forsaken us!"
-    fi
-fi
-
-mount -t vfat "${LOOP_DEV}p1" "${ESP_DIR}"
+mount -t vfat "${LOOP_DEV1}" "${ESP_DIR}"
 sleep 1
 mkdir -p "${ESP_DIR}/${GRUB_DIR}"
 
@@ -108,7 +97,7 @@ info "Generating ${GRUB_DIR}/load.cfg"
 # Include a small initial config in the core image to search for the ESP
 # by filesystem ID in case the platform doesn't provide the boot disk.
 # The existing $root value is given as a hint so it is searched first.
-ESP_FSID=$(grub2-probe -t fs_uuid -d "${LOOP_DEV}p1")
+ESP_FSID=$(grub2-probe -t fs_uuid -d "${LOOP_DEV1}")
 sudo_clobber "${ESP_DIR}/${GRUB_DIR}/load.cfg" <<EOF
 search.fs_uuid ${ESP_FSID} root \$root
 set prefix=(memdisk)
@@ -137,7 +126,7 @@ case "${FLAGS_target}" in
         info "Installing MBR and the BIOS Boot partition."
         cp "/usr/lib/grub/i386-pc/boot.img" "${ESP_DIR}/${GRUB_DIR}"
         grub2-bios-setup --device-map=/dev/null \
-            --directory="${ESP_DIR}/${GRUB_DIR}" "${LOOP_DEV}"
+            --directory="${ESP_DIR}/${GRUB_DIR}" "${LOOP_DEV0}"
         ;;
     x86_64-efi)
         info "Installing default x86_64 UEFI bootloader."

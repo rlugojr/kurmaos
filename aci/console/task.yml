@@ -1,0 +1,14 @@
+---
+platform: linux
+
+image: docker:///apcera/kurmaos-stage4
+
+inputs:
+  - name: buildroot-base
+  - name: kurma-cli-linux-amd64
+  - name: kurmaos-source
+  - name: kurma-source
+  - name: apcera-util-source
+
+run:
+  path: kurmaos-source/images/console/build.sh
