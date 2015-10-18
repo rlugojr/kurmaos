@@ -168,12 +168,13 @@ jobs:
     - aggregate:
       - get: kurmaos-stage4-image
         passed: [ kurmaos-stage4 ]
+        trigger: true
         params:
           skip_download: true
       - get: kurmaos-source
       - get: kurma-source
+        trigger: true
         passed: [ rc ]
-      trigger: true
     - task: build
       file: kurmaos-source/aci/kurma-api/task.yml
     - put: kurma-api-aci-image
@@ -270,7 +271,7 @@ jobs:
         passed: [ rc, kurma-api-aci, console-aci ]
         trigger: true
       - get: kurmaos-source
-        passed: [ rc, kurmaos-kernel, ntp-aci ]
+        passed: [ rc ]
     - task: build
       file: kurmaos-source/code/kurma-init/task.yml
     - put: kurma-init-build
