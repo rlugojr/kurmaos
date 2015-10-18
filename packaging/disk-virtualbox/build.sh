@@ -13,4 +13,5 @@ kurmaos-source/packaging/lib/virtualbox_ovf.sh \
     --memory_size 1024 \
     --output_ovf kurmaos.ovf
 
-zip kurmaos.zip kurmaos.ovf kurmaos.vmdk
+cp kurmaos-source/LICENSE .
+zip kurmaos.zip LICENSE kurmaos.ovf kurmaos.vmdk
