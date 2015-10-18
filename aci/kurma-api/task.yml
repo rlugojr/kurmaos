@@ -8,4 +8,4 @@ inputs:
   - name: kurmaos-source
 
 run:
-  path: kurmaos-source/images/kurma-api/build.sh
+  path: kurmaos-source/aci/kurma-api/build.sh

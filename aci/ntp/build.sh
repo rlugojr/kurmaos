@@ -8,7 +8,7 @@ mkdir rootfs
 cd rootfs
 
 # copy in the startup script
-cp $BASE_PATH/kurmaos-source/images/ntp/start.sh .
+cp $BASE_PATH/kurmaos-source/aci/ntp/start.sh .
 chown 0:0 start.sh
 chmod a+x start.sh
 
@@ -54,7 +54,7 @@ acbuild set-group 0
 acbuild set-name apcera.com/kurma/ntp
 
 # add our custom isolators
-jq -c -s '.[0] * .[1]' .acbuild/currentaci/manifest kurmaos-source/images/ntp/isolator.json > manifest
+jq -c -s '.[0] * .[1]' .acbuild/currentaci/manifest kurmaos-source/aci/ntp/isolator.json > manifest
 mv manifest .acbuild/currentaci/manifest
 
 acbuild end ntp.aci

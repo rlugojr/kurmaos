@@ -11,4 +11,4 @@ inputs:
   - name: apcera-util-source
 
 run:
-  path: kurmaos-source/images/console/build.sh
+  path: kurmaos-source/aci/console/build.sh

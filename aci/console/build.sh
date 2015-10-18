@@ -13,8 +13,8 @@ mkdir root
 tar -xf buildroot-base/buildroot.tar.gz -C root
 
 # configure and build the spawner
-cp kurmaos-source/images/console/spawn.json root/etc/spawn.conf
-cp kurmaos-source/images/console/start.sh root/start.sh
+cp kurmaos-source/aci/console/spawn.json root/etc/spawn.conf
+cp kurmaos-source/aci/console/start.sh root/start.sh
 chown 0:0 root/etc/spawn.conf root/start.sh
 chmod a+x root/start.sh
 go build -a -o root/sbin/spawn apcera-util-source/spawn/spawn.go
@@ -42,7 +42,7 @@ acbuild set-group 0
 acbuild set-name apcera.com/kurma/console
 
 # add our custom isolators
-jq -c -s '.[0] * .[1]' .acbuild/currentaci/manifest kurmaos-source/images/console/isolator.json > manifest
+jq -c -s '.[0] * .[1]' .acbuild/currentaci/manifest kurmaos-source/aci/console/isolator.json > manifest
 mv manifest .acbuild/currentaci/manifest
 
 acbuild end console.aci

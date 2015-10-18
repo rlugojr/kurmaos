@@ -154,6 +154,7 @@ jobs:
   plan:
     - get: kurmaos-stage4-image
       passed: [ kurmaos-stage4 ]
+      trigger: true
       params:
         skip_download: true
     - get: kurmaos-source
@@ -172,6 +173,7 @@ jobs:
       - get: kurmaos-source
       - get: kurma-source
         passed: [ rc ]
+      trigger: true
     - task: build
       file: kurmaos-source/aci/kurma-api/task.yml
     - put: kurma-api-aci-image
@@ -195,10 +197,12 @@ jobs:
     - aggregate:
       - get: buildroot-base
         passed: [ buildroot ]
+        trigger: true
       - get: kurma-cli-linux-amd64
         passed: [ kurma-cli ]
       - get: kurma-source
         passed: [ rc ]
+        trigger: true
       - get: kurmaos-source
       - get: apcera-util-source
     - task: build
@@ -216,6 +220,7 @@ jobs:
         skip_download: true
     - get: kurma-source
       passed: [ rc ]
+      trigger: true
     - get: kurmaos-source
   - task: build
     file: kurmaos-source/code/kurma-server/task.yml
@@ -232,6 +237,7 @@ jobs:
         skip_download: true
     - get: kurma-source
       passed: [ rc ]
+      trigger: true
     - get: kurmaos-source
   - aggregate:
     - task: linux
