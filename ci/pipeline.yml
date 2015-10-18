@@ -384,26 +384,28 @@ jobs:
     config:
       platform: linux
       image: "docker:///busybox"
+      inputs:
+        - name: version
       run:
         path: /bin/sh
         args:
         - "-c"
-        - "echo v`cat version/number` release_name && cat release_name"
+        - "echo v`cat version/number`> release_name && cat release_name"
   - aggregate:
     - put: kurma-release
       params:
         name: prep/release_name
         tag: version/number
         globs:
-        - "prep/*.tar.gz"
-        - "prep/*.zip"
+        - "**/*.tar.gz"
+        - "**/*.zip"
     - put: kurmaos-release
       params:
         name: prep/release_name
         tag: version/number
         globs:
-        - "prep/*.tar.gz"
-        - "prep/*.zip"
+        - "**/*.tar.gz"
+        - "**/*.zip"
 
 - name: shipit
   serial_groups: [ version ]
