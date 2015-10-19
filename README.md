@@ -23,6 +23,10 @@ The Kurma build process leverages a set of Docker images as follows:
   images.
 * `apcera/kurmaos-kernel` - This image represents the current kernel used in
   KurmaOS images.
+* `apcera/docker-aws-tools` - This image contains the ec2-api-tools package on
+  Debian and is used for build the AMIs for KurmaOS. Using this package on
+  Debian proved to be simpler than on Gentoo, as the package on Gentoo wanted to
+  pull in 120 other packages from the Java dependency.
 
 On top of these base images, there are three other categories of builds:
 

@@ -13,12 +13,12 @@ groups:
   - kurma-cli
   - kurma-server
   - rc
-- name: base
+- name: docker
   jobs:
   - kurmaos-stage3
   - kurmaos-stage4
   - kurmaos-kernel
-  - kurma-init
+  - docker-aws-tools
 - name: acis
   jobs:
   - buildroot
@@ -146,6 +146,33 @@ jobs:
   - put: kurmaos-kernel-image
     params:
       pull_repository: apcera/kurmaos-kernel
+      tag: tag-date/image-tag
+    get_params:
+      skip_download: true
+
+- name: docker-aws-tools
+  serial: true
+  plan:
+  - get: kurmaos-source
+  - task: tag-date
+    config:
+      platform: linux
+      image: "docker:///concourse/busyboxplus#git"
+      inputs:
+        - name: kurmaos-source
+      run:
+        path: /bin/sh
+        args:
+          - "-c"
+          - "date +%Y%m%d-`cd kurmaos-source && git rev-parse HEAD | cut -c1-8` > image-tag && cat image-tag"
+  - put: docker-aws-tools-image
+    params:
+      build: kurmaos-source/docker/docker-aws-tools
+    get_params:
+      skip_download: true
+  - put: docker-aws-tools-image
+    params:
+      pull_repository: apcera/docker-aws-tools
       tag: tag-date/image-tag
     get_params:
       skip_download: true
@@ -514,6 +541,13 @@ resources:
   type: docker-image
   source:
     repository: apcera/kurmaos-kernel
+    username: {{docker-username}}
+    email: {{docker-email}}
+    password: {{docker-password}}
+- name: docker-aws-tools-image
+  type: docker-image
+  source:
+    repository: apcera/docker-aws-tools
     username: {{docker-username}}
     email: {{docker-email}}
     password: {{docker-password}}
