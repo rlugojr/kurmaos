@@ -1,0 +1,7 @@
+{
+  "app": {
+    "isolators": [
+      { "name": "host/api-access", "value": true }
+    ]
+  }
+}

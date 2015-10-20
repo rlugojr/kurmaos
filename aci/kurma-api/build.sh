@@ -41,6 +41,10 @@ acbuild set-user 1000
 acbuild set-group 1000
 acbuild set-name apcera.com/kurma/api
 
+# add our custom isolators
+jq -c -s '.[0] * .[1]' .acbuild/currentaci/manifest kurmaos-source/aci/kurma-api/isolator.json > manifest
+mv manifest .acbuild/currentaci/manifest
+
 acbuild end kurma-api.aci
 gzip kurma-api.aci
 mv kurma-api.aci.gz kurma-api.aci
