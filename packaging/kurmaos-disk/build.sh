@@ -25,13 +25,12 @@ function salt_earth() {
   done
 }
 
-containers_gone_wild
-trap salt_earth EXIT
+if ! ls -1 /dev/loop* ; then
+    containers_gone_wild
+    trap salt_earth EXIT
+fi
 
 cd kurmaos-source/packaging
-
-mount
-ls -l /dev
 
 # Create and mount the disk
 ./lib/disk_util --disk_layout=base format $BASE_PATH/raw.img

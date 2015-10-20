@@ -4,7 +4,7 @@ BASE_PATH=`pwd`
 
 set -e -x
 
-gunzip kurmaos-disk-image/kurmaos-disk.img.gz
+gunzip -k kurmaos-disk-image/kurmaos-disk.img.gz
 qemu-img convert -f raw kurmaos-disk-image/kurmaos-disk.img -O vmdk -o adapter_type=ide kurmaos.vmdk
 
 kurmaos-source/packaging/lib/virtualbox_ovf.sh \
