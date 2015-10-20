@@ -32,6 +32,7 @@ groups:
   - kurmaos-disk
   - disk-vmware
   - disk-virtualbox
+  - disk-openstack
 - name: ship
   jobs:
   - ci
@@ -228,6 +229,7 @@ jobs:
         trigger: true
       - get: kurma-cli-linux-amd64
         passed: [ kurma-cli ]
+        trigger: true
       - get: kurma-source
         passed: [ rc ]
         trigger: true
@@ -343,6 +345,19 @@ jobs:
     - task: build
       file: kurmaos-source/packaging/disk-virtualbox/task.yml
     - put: disk-virtualbox-image
+      params:
+        from: kurmaos.zip
+
+- name: disk-openstack
+  plan:
+    - aggregate:
+      - get: kurmaos-disk-image
+        passed: [ kurmaos-disk ]
+        trigger: true
+      - get: kurmaos-source
+    - task: build
+      file: kurmaos-source/packaging/disk-openstack/task.yml
+    - put: disk-openstack-image
       params:
         from: kurmaos.zip
 
@@ -661,6 +676,14 @@ resources:
     access_key_id: {{aws-access-key}}
     secret_access_key: {{aws-secret-key}}
     versioned_file: disks/kurmaos-virtualbox.zip
+- name: disk-openstack-image
+  type: s3
+  source:
+    bucket: kurmaos-artifacts
+    region_name: us-west-2
+    access_key_id: {{aws-access-key}}
+    secret_access_key: {{aws-secret-key}}
+    versioned_file: disks/kurmaos-openstack.zip
 
   # Release Assets
   #
