@@ -39,7 +39,7 @@ emerge \
     app-arch/zip \
     dev-lang/go \
     sys-apps/busybox \
-    sys-apps/kexec \
+    sys-apps/kexec-tools \
     sys-fs/e2fsprogs \
     sys-fs/dosfstools \
     app-emulation/qemu \
