@@ -45,6 +45,5 @@ acbuild set-name apcera.com/kurma/api
 jq -c -s '.[0] * .[1]' .acbuild/currentaci/manifest kurmaos-source/aci/kurma-api/isolator.json > manifest
 mv manifest .acbuild/currentaci/manifest
 
-acbuild end kurma-api.aci
-gzip kurma-api.aci
-mv kurma-api.aci.gz kurma-api.aci
+acbuild write --overwrite kurma-api.aci
+acbuild end

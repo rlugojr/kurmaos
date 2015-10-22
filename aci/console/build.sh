@@ -45,6 +45,5 @@ acbuild set-name apcera.com/kurma/console
 jq -c -s '.[0] * .[1]' .acbuild/currentaci/manifest kurmaos-source/aci/console/isolator.json > manifest
 mv manifest .acbuild/currentaci/manifest
 
-acbuild end console.aci
-gzip console.aci
-mv console.aci.gz console.aci
+acbuild write --overwrite console.aci
+acbuild end

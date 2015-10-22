@@ -26,12 +26,12 @@ echo "=app-emulation/open-vm-tools-9.10.0" >> /etc/portage/package.unmask
 echo "=kurmaos-base/vboot_reference-1.0-r887" >> /etc/portage/package.unmask
 echo "=dev-libs/libdnet-1.12" >> /etc/portage/package.unmask
 echo "=dev-libs/libmspack-0.4_alpha" >> /etc/portage/package.unmask
-echo "=sys-boot/grub-2.02_beta2_p20141205-r1" >> /etc/portage/package.unmask
+echo "=sys-boot/grub-2.02_beta2_p20150727-r1" >> /etc/portage/package.unmask
 echo "=sys-boot/syslinux-4.07-r1" >> /etc/portage/package.unmask
 emerge \
     =kurmaos-base/vboot_reference-1.0-r887 \
     =app-emulation/open-vm-tools-9.10.0 \
-    =sys-boot/grub-2.02_beta2_p20141205-r1 \
+    =sys-boot/grub-2.02_beta2_p20150727-r1 \
     =sys-boot/syslinux-4.07-r1
 
 emerge \
@@ -39,6 +39,7 @@ emerge \
     app-arch/zip \
     dev-lang/go \
     sys-apps/busybox \
+    sys-apps/kexec \
     sys-fs/e2fsprogs \
     sys-fs/dosfstools \
     app-emulation/qemu \

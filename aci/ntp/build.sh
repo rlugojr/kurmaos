@@ -57,6 +57,5 @@ acbuild set-name apcera.com/kurma/ntp
 jq -c -s '.[0] * .[1]' .acbuild/currentaci/manifest kurmaos-source/aci/ntp/isolator.json > manifest
 mv manifest .acbuild/currentaci/manifest
 
-acbuild end ntp.aci
-gzip ntp.aci
-mv ntp.aci.gz ntp.aci
+acbuild write --overwrite ntp.aci
+acbuild end
