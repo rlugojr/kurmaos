@@ -16,6 +16,5 @@ docker run --rm \
        -w /tmp/build \
        apcera/kurmaos-stage4 \
        bash -c "./kurmaos-source/packaging/disk-vmware/build.sh && cp kurmaos.zip $output_filename"
-       ./kurmaos-source/packaging/disk-vmware/build.sh
 
 echo "Compiled output available in ../../output/$output_filename"
