@@ -9,8 +9,8 @@ emerge-webrsync
 emerge --sync
 
 # allow the proper kernel version
-echo '=sys-kernel/vanilla-sources-4.2.3 ~amd64' >> /etc/portage/package.accept_keywords
-emerge =sys-kernel/vanilla-sources-4.2.3
+echo '=sys-kernel/vanilla-sources-4.2.4 ~amd64' >> /etc/portage/package.accept_keywords
+emerge =sys-kernel/vanilla-sources-4.2.4
 mv /tmp/kernel.config /usr/src/linux/.config
 
 # compile it
