@@ -11,10 +11,17 @@ emerge --sync
 # allow the proper kernel version
 echo '=sys-kernel/vanilla-sources-4.2.5 ~amd64' >> /etc/portage/package.accept_keywords
 emerge =sys-kernel/vanilla-sources-4.2.5
-mv /tmp/kernel.config /usr/src/linux/.config
+mv /tmp/kernel.defconfig /usr/src/linux/.config
+
+cd /usr/src/linux
+
+# apply patches
+for patchfile in /tmp/*.patch ; do
+    patch --batch --forward -p1 < $patchfile
+    rm $patchfile
+done
 
 # compile it
-cd /usr/src/linux
 make olddefconfig
 make -j3
 make INSTALL_MOD_STRIP="--strip-unneeded" modules_install
