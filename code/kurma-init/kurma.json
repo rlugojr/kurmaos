@@ -2,6 +2,18 @@
   "oem_config": { "device": "LABEL=OEM", "config_path": "/kurma_oem.json" },
   "hostname": "kurmaos",
   "parent_cgroup_name": "kurma",
+  "modules": [
+    "nf_nat",
+    "bridge",
+    "br_netfilter",
+    "nf_conntrack_ipv4",
+    "xt_addrtype",
+    "ipt_MASQUERADE",
+    "xt_conntrack",
+    "iptable_nat",
+    "iptable_filter",
+    "veth"
+  ],
   "required_namespaces": ["ipc", "mount", "pid", "uts" ],
   "disks": [
     { "device": "LABEL=ROOT", "usage":  [ "pods", "volumes" ], "resize": true }
