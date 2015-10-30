@@ -119,8 +119,20 @@ ln -s libresolv-2.20.so lib/libresolv.so.2
 echo "/lib" > etc/ld.so.conf
 ldconfig -r . -C etc/ld.so.cache -f etc/ld.so.conf
 
+# Figure the compresison command
+: "${INITRD_COMPRESSION:=gzip}"
+compressCommand=""
+if [ "$INITRD_COMPRESSION" == "gzip" ]; then
+  compressCommand="gzip"
+elif [ "$INITRD_COMPRESSION" == "lzma" ]; then
+  compressCommand="lzma"
+else
+  echo "Unrecognized compression setting!"
+  exit 1
+fi
+
 # package it up
-find . | cpio --quiet -o -H newc | gzip > $BASE_PATH/initrd
+find . | cpio --quiet -o -H newc | $compressCommand > $BASE_PATH/initrd
 cd $BASE_PATH
 cp /boot/bzImage .
 tar -czf kurma-init.tar.gz bzImage initrd

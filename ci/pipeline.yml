@@ -319,6 +319,9 @@ jobs:
         passed: [ rc ]
     - task: build
       file: kurmaos-source/code/kurma-init/task.yml
+      config:
+        params:
+          INITRD_COMPRESSION: lzma
     - put: kurma-init-build
       params:
         from: kurma-init.tar.gz
