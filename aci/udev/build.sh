@@ -5,17 +5,18 @@ export BASE_PATH=`pwd`
 set -e -x
 
 emerge-webrsync
-emerge eudev
+emerge sys-apps/hwids
+emerge sys-fs/eudev
 
 mkdir rootfs
 cd rootfs
 
 # copy in the startup script
-cp $BASE_PATH/kurmaos-source/aci/eudev/start.sh .
+cp $BASE_PATH/kurmaos-source/aci/udev/start.sh .
 chown 0:0 start.sh
 chmod a+x start.sh
 
-# copy in busybox and eudev
+# copy in busybox and udev
 mkdir bin
 cp /bin/busybox bin/
 ln -s busybox bin/sh
@@ -56,6 +57,9 @@ ldconfig -r . -C etc/ld.so.cache -f etc/ld.so.conf
 # create a symlink so the console can access kernel modules from the host
 ln -s /host/proc/1/root/lib/modules lib/modules
 ln -s /host/proc/1/root/lib/firmware lib/firmware
+
+# update the hardware db
+udevadm hwdb --update --root=`pwd`
 
 # generate the aci
 cd $BASE_PATH
