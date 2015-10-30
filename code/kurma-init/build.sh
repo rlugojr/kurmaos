@@ -20,6 +20,7 @@ go build -o kurma $TARGET/kurma-init.go
 
 # copy in the acis
 cp $BASE_PATH/ntp-aci-image/ntp.aci ntp.aci
+cp $BASE_PATH/udev-aci-image/udev.aci udev.aci
 cp $BASE_PATH/console-aci-image/console.aci console.aci
 cp $BASE_PATH/kurma-api-aci-image/kurma-api.aci kurma-api.aci
 

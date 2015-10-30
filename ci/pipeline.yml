@@ -23,6 +23,7 @@ groups:
   jobs:
   - buildroot
   - ntp-aci
+  - udev-aci
   - kurma-api-aci
   - kurma-cli
   - console-aci
@@ -191,6 +192,19 @@ jobs:
     - put: ntp-aci-image
       params:
         from: ntp.aci
+- name: udev-aci
+  plan:
+    - get: kurmaos-stage4-image
+      passed: [ kurmaos-stage4 ]
+      trigger: true
+      params:
+        skip_download: true
+    - get: kurmaos-source
+    - task: build
+      file: kurmaos-source/aci/udev/task.yml
+    - put: udev-aci-image
+      params:
+        from: udev.aci
 - name: kurma-api-aci
   plan:
     - aggregate:
@@ -292,6 +306,8 @@ jobs:
           skip_download: true
       - get: ntp-aci-image
         passed: [ ntp-aci ]
+      - get: udev-aci-image
+        passed: [ udev-aci ]
       - get: console-aci-image
         passed: [ console-aci ]
       - get: kurma-api-aci-image
@@ -604,6 +620,14 @@ resources:
     access_key_id: {{aws-access-key}}
     secret_access_key: {{aws-secret-key}}
     versioned_file: aci/ntp.aci
+- name: udev-aci-image
+  type: s3
+  source:
+    bucket: kurmaos-artifacts
+    region_name: us-west-2
+    access_key_id: {{aws-access-key}}
+    secret_access_key: {{aws-secret-key}}
+    versioned_file: aci/udev.aci
 - name: kurma-api-aci-image
   type: s3
   source:
