@@ -23,6 +23,12 @@ go build -a -o root/sbin/spawn apcera-util-source/spawn/spawn.go
 tar -xf kurma-cli-linux-amd64/kurma-cli-linux-amd64.tar.gz -C kurma-cli-linux-amd64
 cp kurma-cli-linux-amd64/kurma-cli root/usr/bin/kurma-cli
 
+# create the halt/poweroff/reboot command handler for the container
+rm root/sbin/poweroff root/sbin/halt root/sbin/reboot
+gcc kurma-source/util/power/power.c -o root/sbin/poweroff
+ln -s poweroff root/sbin/halt
+ln -s poweroff root/sbin/reboot
+
 # create a symlink so the console can access kernel modules from the host
 ln -s /host/proc/1/root/lib/firmware root/lib/firmware
 ln -s /host/proc/1/root/lib/modules root/lib/modules
