@@ -29,6 +29,11 @@ gcc kurma-source/util/power/power.c -o root/sbin/poweroff
 ln -s poweroff root/sbin/halt
 ln -s poweroff root/sbin/reboot
 
+# copy cgpt
+cp /usr/bin/cgpt root/bin/cgpt
+mkdir -p root/bin/old_bins
+cp /usr/bin/old_bins/cgpt root/bin/old_bins/cgpt
+
 # create a symlink so the console can access kernel modules from the host
 ln -s /host/proc/1/root/lib/firmware root/lib/firmware
 ln -s /host/proc/1/root/lib/modules root/lib/modules
