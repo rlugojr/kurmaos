@@ -12,7 +12,7 @@
       "1":{
         "label":"EFI-SYSTEM",
         "type":"efi",
-        "blocks":"262144",
+        "blocks":"524288",
         "fs_type":"vfat",
         "mount":"/boot",
         "features": ["hybrid"]
@@ -23,13 +23,26 @@
         "blocks":"4096"
       },
       "3":{
+        "label":"KURMA-A",
+        "uuid":"aa608ef3-dc7d-4bdd-b2b2-b87b3832f47f",
+        "type":"coreos-rootfs",
+        "blocks":"4096",
+        "features": ["prioritize", "verity"]
+      },
+      "4":{
+        "label":"KURMA-B",
+        "uuid":"16294bcb-da53-458d-bc1c-7dbf84893896",
+        "type":"coreos-rootfs",
+        "blocks":"4096"
+      },
+      "5":{
         "label":"OEM",
         "type":"data",
         "blocks":"262144",
         "fs_type":"ext4",
         "mount": "/boot/oem"
       },
-      "4":{
+      "6":{
         "label":"ROOT",
         "type":"coreos-resize",
         "blocks":"2097152",
@@ -38,7 +51,7 @@
       }
     },
     "vm":{
-      "4":{
+      "6":{
         "label":"ROOT",
         "blocks":"12943360"
       }

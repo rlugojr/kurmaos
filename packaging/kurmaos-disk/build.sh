@@ -35,8 +35,11 @@ cd kurmaos-source/packaging
 # Create and mount the disk
 ./lib/disk_util --disk_layout=base format $BASE_PATH/raw.img
 ./lib/disk_util --disk_layout=base mount $BASE_PATH/raw.img /tmp/rootfs
+mkdir -p /tmp/rootfs/boot/kurmaos
 
-tar -xf $BASE_PATH/kurma-init-build/kurma-init.tar.gz -C /tmp/rootfs/boot
+tar -xf $BASE_PATH/kurma-init-build/kurma-init.tar.gz -C /tmp/rootfs/boot/kurmaos
+mv /tmp/rootfs/boot/kurmaos/bzImage /tmp/rootfs/boot/kurmaos/vmlinuz-a
+mv /tmp/rootfs/boot/kurmaos/initrd /tmp/rootfs/boot/kurmaos/initrd-a
 
 ./lib/disk_util umount /tmp/rootfs
 

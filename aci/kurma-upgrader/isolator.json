@@ -1,0 +1,9 @@
+{
+  "app": {
+    "isolators": [
+      { "name": "host/api-access", "value": true },
+      { "name": "host/privileged", "value": true },
+      { "name": "os/linux/namespaces", "value": [ "mount" ] }
+    ]
+  }
+}

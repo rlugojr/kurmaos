@@ -1,0 +1,12 @@
+---
+platform: linux
+
+image: docker:///apcera/kurmaos-stage4
+
+inputs:
+  - name: kurma-source
+  - name: kurmaos-source
+  - name: kurma-init-build
+
+run:
+  path: kurmaos-source/aci/kurma-upgrader/build.sh
