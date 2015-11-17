@@ -4,10 +4,6 @@ export BASE_PATH=`pwd`
 
 set -e -x
 
-emerge-webrsync
-emerge sys-apps/hwids
-emerge sys-fs/eudev
-
 mkdir rootfs
 cd rootfs
 

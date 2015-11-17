@@ -45,7 +45,9 @@ emerge \
     app-emulation/qemu \
     app-misc/jq \
     dev-vcs/mercurial \
-    sys-devel/bc
+    sys-devel/bc \
+    sys-apps/hwids \
+    sys-fs/eudev
 
 # install acbuild, for creating aci images
 cd /tmp
