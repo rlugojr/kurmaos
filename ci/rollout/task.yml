@@ -11,6 +11,7 @@ inputs:
   - name: kurma-server-linux-amd64
   - name: disk-vmware-image
   - name: disk-virtualbox-image
+  - name: kurma-upgrader-aci-image
 
 run:
   path: kurmaos-source/ci/rollout/prep.sh

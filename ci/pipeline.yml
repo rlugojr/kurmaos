@@ -12,6 +12,7 @@ groups:
   - kurma-api-aci
   - kurma-cli
   - kurma-server
+  - kurma-upgrader-aci
   - rc
 - name: docker
   jobs:
@@ -26,6 +27,7 @@ groups:
   - udev-aci
   - kurma-api-aci
   - kurma-cli
+  - kurma-upgrader-aci
   - console-aci
   - kurma-init
 - name: machines
@@ -222,6 +224,24 @@ jobs:
     - put: kurma-api-aci-image
       params:
         from: kurma-api.aci
+- name: kurma-upgrader-aci
+  plan:
+    - aggregate:
+      - get: kurmaos-stage4-image
+        passed: [ kurmaos-stage4 ]
+        trigger: true
+        params:
+          skip_download: true
+      - get: kurmaos-source
+      - get: kurma-source
+      - get: kurma-init-build
+        trigger: true
+        passed: [ kurma-init ]
+    - task: build
+      file: kurmaos-source/aci/kurma-upgrader/task.yml
+    - put: kurma-upgrader-aci-image
+      params:
+        from: kurma-upgrader.aci
 - name: buildroot
   plan:
     - aggregate:
@@ -401,6 +421,8 @@ jobs:
       passed: [ shipit ]
     - get: disk-virtualbox-image
       passed: [ shipit ]
+    - get: kurma-upgrader-aci-image
+      passed: [ shipit ]
   - task: prep
     file: kurmaos-source/ci/rollout/task.yml
   - aggregate:
@@ -415,7 +437,7 @@ jobs:
     - put: release-kurma-cli-darwin-amd64
       params:
         from: prep/kurma-cli-(.*)-darwin-amd64.tar.gz
-        to: cli//
+        to: cli/
     - put: release-kurmaos-vmware
       params:
         from: prep/kurmaos-vmware-(.*).zip
@@ -424,6 +446,10 @@ jobs:
       params:
         from: prep/kurmaos-virtualbox-(.*).zip
         to: vm/virtualbox/
+    - put: release-kurma-upgrader
+      params:
+        from: prep/kurma-upgrader-(.*).aci
+        to: vm/
 
 - name: github-it
   plan:
@@ -440,6 +466,8 @@ jobs:
     - get: release-kurmaos-vmware
       passed: [ rollout ]
     - get: release-kurmaos-virtualbox
+      passed: [ rollout ]
+    - get: release-kurma-upgrader
       passed: [ rollout ]
   - task: prep
     config:
@@ -460,6 +488,7 @@ jobs:
         globs:
         - "**/*.tar.gz"
         - "**/*.zip"
+        - "**/*.aci"
     - put: kurmaos-release
       params:
         name: prep/release_name
@@ -467,6 +496,7 @@ jobs:
         globs:
         - "**/*.tar.gz"
         - "**/*.zip"
+        - "**/*.aci"
 
 - name: shipit
   serial_groups: [ version ]
@@ -639,6 +669,14 @@ resources:
     access_key_id: {{aws-access-key}}
     secret_access_key: {{aws-secret-key}}
     versioned_file: aci/kurma-api.aci
+- name: kurma-upgrader-aci-image
+  type: s3
+  source:
+    bucket: kurmaos-artifacts
+    region_name: us-west-2
+    access_key_id: {{aws-access-key}}
+    secret_access_key: {{aws-secret-key}}
+    versioned_file: aci/kurma-upgrader.aci
 - name: console-aci-image
   type: s3
   source:
@@ -750,6 +788,13 @@ resources:
     access_key_id: {{aws-access-key}}
     secret_access_key: {{aws-secret-key}}
     regexp: vm/virtualbox/kurmaos-virtualbox-(.*).zip
+- name: release-kurma-upgrader
+  type: s3
+  source:
+    bucket: kurmaos-releases
+    access_key_id: {{aws-access-key}}
+    secret_access_key: {{aws-secret-key}}
+    regexp: vm/kurma-upgrader-(.*).aci
 
   # Github Releases
 - name: kurma-release
