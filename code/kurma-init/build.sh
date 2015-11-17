@@ -25,8 +25,7 @@ cp $BASE_PATH/console-aci-image/console.aci console.aci
 cp $BASE_PATH/kurma-api-aci-image/kurma-api.aci kurma-api.aci
 
 # configure the init script
-cp $BASE_PATH/kurmaos-source/code/kurma-init/kurma_init.sh init
-chmod 755 init
+ln -s kurma init
 
 # copy the kernel modules
 rsync -a /lib/modules lib/
@@ -40,12 +39,9 @@ chmod a+x bin/resizefs
 cp /bin/busybox bin/busybox
 ln -s busybox bin/blockdev
 ln -s busybox bin/cat
-ln -s busybox bin/cp
 ln -s busybox bin/grep
-ln -s busybox bin/mkdir
 ln -s busybox bin/mktemp
 ln -s busybox bin/modprobe
-ln -s busybox bin/mount
 ln -s busybox bin/ps
 ln -s busybox bin/rm
 ln -s busybox bin/sh
@@ -53,7 +49,6 @@ ln -s busybox bin/udhcpc
 
 ln -s ../bin/busybox sbin/ifconfig
 ln -s ../bin/busybox sbin/route
-ln -s ../bin/busybox sbin/switch_root
 
 # udhcpc script
 mkdir -p usr/share/udhcpc
