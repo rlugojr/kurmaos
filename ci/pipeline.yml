@@ -518,6 +518,8 @@ jobs:
       passed: [ disk-vmware ]
     - get: disk-virtualbox-image
       passed: [ disk-virtualbox ]
+    - get: kurma-upgrader-aci-image
+      passed: [ kurma-upgrader-aci ]
   - aggregate:
     - put: version
       params: { file: version/number }
