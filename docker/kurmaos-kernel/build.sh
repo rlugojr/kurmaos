@@ -8,6 +8,9 @@ source /etc/profile
 emerge-webrsync
 emerge --sync
 
+# Add the linux-firmware package to include when bundling
+emerge sys-kernel/linux-firmware
+
 # allow the proper kernel version
 echo '=sys-kernel/vanilla-sources-4.2.6 ~amd64' >> /etc/portage/package.accept_keywords
 emerge =sys-kernel/vanilla-sources-4.2.6
