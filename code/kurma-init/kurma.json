@@ -16,7 +16,12 @@
   ],
   "required_namespaces": ["ipc", "mount", "pid", "uts" ],
   "disks": [
-    { "device": "LABEL=ROOT", "usage":  [ "pods", "volumes" ], "resize": true }
+    { "device": "LABEL=ROOT",
+      "fstype": "ext4",
+      "options": "data=ordered,commit=5",
+      "usage":  [ "images", "pods", "volumes" ],
+      "resize": true
+    }
   ],
   "network_config": {
     "interfaces": [
