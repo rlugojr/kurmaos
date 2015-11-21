@@ -71,6 +71,7 @@ cp /usr/bin/old_bins/cgpt bin/old_bins/cgpt
 mkdir -p etc/ssl/certs
 cp $BASE_PATH/kurmaos-source/code/kurma-init/kurma.json etc/kurma.json
 chown 0:0 etc/kurma.json
+touch etc/mtab
 touch etc/resolv.conf
 echo 'LSB_VERSION=1.4' > etc/lsb-release
 echo 'DISTRIB_ID=KurmaOS' > etc/lsb-release
