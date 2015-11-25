@@ -61,16 +61,65 @@ On top of these base images, there are three other categories of builds:
 
 ### Getting Started
 
-TBD, document the new Docker based build process.
+For local development, each of the previous mentioned directories for individual
+pieces in the build process includes a `run.sh` script. This script can be
+executed locally to trigger that step to be built locally using Docker. It will
+map in the necessary inputs and outputs as volumes, so the build will happen
+within Docker using your local code and output the results input the `output`
+directory.
 
-### Tooling
+To get set up locally, you'll need to pull down two images from the Docker
+public registry. Please note, you may occassionally need to re-retrieve them as
+the base docker images change, such as with kernel and tooling updates.
 
-The following pieces make up the build environment:
+```
+$ docker pull apcera/kurmaos-stage4
+$ docker pull apcera/kurmaos-kernel
+```
 
-* `aci/` contains all of the ACI package build scripts.
-* `base/` contains all of the Gentoo build scripts for the pieces in step 1, 2,
-  and 4.
-* `packer/` contains the packer build templates used in step 5.
-* `output/` is where the scripts will look for local build artifacts.
-* `vagrant/` provides a way to quickly bring up a virtual machine running
-  KurmaOS from a step 5 output. *(not yet finished)*
+It is also recommended to grab some of the build artifacts that you aren't
+likely to be changing locally very often. Thie will save some time from
+generating them yourself.
+
+```
+$ wget -O output/buildroot.tar.gz https://s3-us-west-2.amazonaws.com/kurmaos-artifacts/aci/buildroot.tar.gz
+$ wget -O output/ntp.aci https://s3-us-west-2.amazonaws.com/kurmaos-artifacts/aci/ntp.aci
+$ wget -O output/udev.aci https://s3-us-west-2.amazonaws.com/kurmaos-artifacts/aci/udev.aci
+```
+
+You may also be able to retrieve some of the following ones, if you are not
+modifying anything with the CLI or API. Note: the CLI is bundled with the
+console, so often when changing the CLI, it is recommended to generate the
+console.
+
+```
+$ wget -O output/kurma-cli-linux-amd64.tar.gz https://s3-us-west-2.amazonaws.com/kurmaos-artifacts/cli/kurma-cli-linux-amd64.tar.gz
+$ wget -O output/kurma-api.aci https://s3-us-west-2.amazonaws.com/kurmaos-artifacts/aci/kurma-api.aci
+$ wget -O output/console.aci https://s3-us-west-2.amazonaws.com/kurmaos-artifacts/aci/console.aci
+```
+
+With those retrieved, it is now fairly easy to generate a new VM image to test
+locally.
+
+For instance, if you're working on the daemon and need to generate a new
+Virtualbox VM, can run the followed chained commands:
+
+```
+$ ./code/kurma-init/run.sh && ./packaging/kurmaos-disk/run.sh && ./packaging/disk-virtualbox/run.sh
+```
+
+This will compile the `kurma-init` process and generate a new kernel/initrd
+image, then run the step to build a new base disk layout, and then have that
+disk image configured for virtualbox. At the end, you'll have a zip file at
+`output/kurmaos-virtualbox.zip` with an OVF file ready to load into
+Virtualbox. This step takes about 60-65 seconds locally on my laptop, which is
+pretty decent considering it is generating an entire VM image.
+
+*Note:* the build steps often have inputs from other steps, so using different
+pieces of them requires some familiarity with the build process. It may be
+useful to glance at some of the `run.sh` scripts to see what volumes are being
+mounted in if you have any confusion.
+
+*Note 2:* the build scripts assume the `kurmaos` repository is checked out
+ within the `GOPATH`. When mapping in the Kurma code, it will expect the `kurma`
+ repository to be up one level from the `kurmos` repository.
