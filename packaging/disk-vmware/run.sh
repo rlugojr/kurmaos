@@ -9,7 +9,7 @@ cd $(dirname $0)
 output_filename=kurmaos-vmware.zip
 touch ../../output/$output_filename
 
-docker run --rm \
+docker run --privileged --rm \
        -v `pwd`/../../output/kurmaos-disk.img.gz:/tmp/build/kurmaos-disk-image/kurmaos-disk.img.gz \
        -v `pwd`/../..:/tmp/build/kurmaos-source \
        -v `pwd`/../../output/$output_filename:/tmp/build/$output_filename \

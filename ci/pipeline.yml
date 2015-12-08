@@ -370,6 +370,7 @@ jobs:
       - get: kurmaos-source
     - task: build
       file: kurmaos-source/packaging/disk-vmware/task.yml
+      privileged: true
     - put: disk-vmware-image
       params:
         from: kurmaos.zip
