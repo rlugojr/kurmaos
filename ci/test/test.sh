@@ -19,6 +19,8 @@ then
   mount -t cgroup none /sys/fs/cgroup/memory -o memory
 fi
 
+go version
+
 mkdir -p go/src/github.com/apcera
 ln -s $BASE_PATH/kurma-source go/src/github.com/apcera/kurma
 export GOPATH="$BASE_PATH/go:$BASE_PATH/kurma-source/Godeps/_workspace"
