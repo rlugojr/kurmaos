@@ -6,6 +6,7 @@ image: docker:///apcera/kurmaos-stage4
 inputs:
   - name: kurma-source
   - name: kurmaos-source
+  - name: version
 
 run:
   path: kurmaos-source/code/kurma-cli/build-linux.sh

@@ -219,6 +219,7 @@ jobs:
       - get: kurma-source
         trigger: true
         passed: [ rc ]
+      - get: version
     - task: build
       file: kurmaos-source/aci/kurma-api/task.yml
     - put: kurma-api-aci-image
@@ -286,6 +287,7 @@ jobs:
       passed: [ rc ]
       trigger: true
     - get: kurmaos-source
+    - get: version
   - task: build
     file: kurmaos-source/code/kurma-server/task.yml
   - put: kurma-server-linux-amd64
@@ -303,6 +305,7 @@ jobs:
       passed: [ rc ]
       trigger: true
     - get: kurmaos-source
+    - get: version
   - aggregate:
     - task: linux
       file: kurmaos-source/code/kurma-cli/task-linux.yml
@@ -337,6 +340,7 @@ jobs:
         trigger: true
       - get: kurmaos-source
         passed: [ rc ]
+      - get: version
     - task: build
       file: kurmaos-source/code/kurma-init/task.yml
       config:

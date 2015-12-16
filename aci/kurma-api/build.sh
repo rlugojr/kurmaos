@@ -1,15 +1,21 @@
 #!/bin/bash
 
-export BASE_PATH=`pwd`
+BASE_PATH=`pwd`
 
 set -e -x
+
+# calculate ldflags for the version number
+BUILD_LDFLAGS=""
+if [[ -f $BASE_PATH/version/number ]]; then
+    BUILD_LDFLAGS="-X github.com/apcera/kurma/stage1/client.version=$(cat $BASE_PATH/version/number)"
+fi
 
 mkdir $BASE_PATH/rootfs
 
 mkdir -p go/src/github.com/apcera
 ln -s $BASE_PATH/kurma-source go/src/github.com/apcera/kurma
 export GOPATH="$BASE_PATH/go:$BASE_PATH/kurma-source/Godeps/_workspace"
-go build -a -o $BASE_PATH/rootfs/kurma-api go/src/github.com/apcera/kurma/kurma-api.go
+go build -ldflags "$BUILD_LDFLAGS" -a -o $BASE_PATH/rootfs/kurma-api go/src/github.com/apcera/kurma/kurma-api.go
 
 cd $BASE_PATH/rootfs
 

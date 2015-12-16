@@ -4,6 +4,12 @@ BASE_PATH=`pwd`
 
 set -e -x
 
+# calculate ldflags for the version number
+BUILD_LDFLAGS=""
+if [[ -f $BASE_PATH/version/number ]]; then
+    BUILD_LDFLAGS="-X github.com/apcera/kurma/stage1/client.version=$(cat $BASE_PATH/version/number)"
+fi
+
 # setup the gopath
 mkdir -p go/src/github.com/apcera
 ln -s $BASE_PATH/kurma-source go/src/github.com/apcera/kurma
@@ -16,7 +22,7 @@ cd root
 
 # build kurma-init
 go version
-go build -o kurma $TARGET/kurma-init.go
+go build -ldflags "$BUILD_LDFLAGS" -o kurma $TARGET/kurma-init.go
 
 # copy in the acis
 cp $BASE_PATH/ntp-aci-image/ntp.aci ntp.aci
