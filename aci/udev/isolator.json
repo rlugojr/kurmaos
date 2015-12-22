@@ -1,7 +1,15 @@
 {
   "app": {
     "isolators": [
-      { "name": "host/privileged", "value": true }
+      { "name": "host/privileged", "value": true },
+      {
+        "name": "os/linux/namespaces",
+        "value": {
+          "ipc": "host",
+          "net": "host",
+          "uts": "host"
+        }
+      }
     ]
   }
 }

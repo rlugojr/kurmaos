@@ -14,7 +14,7 @@
     "iptable_filter",
     "veth"
   ],
-  "required_namespaces": ["ipc", "mount", "pid", "uts" ],
+  "required_namespaces": [ "mount", "pid" ],
   "disks": [
     { "device": "LABEL=ROOT",
       "fstype": "ext4",
