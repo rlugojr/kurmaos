@@ -217,9 +217,9 @@ jobs:
           skip_download: true
       - get: kurmaos-source
       - get: kurma-source
-        trigger: true
         passed: [ rc ]
       - get: version
+        trigger: true
     - task: build
       file: kurmaos-source/aci/kurma-api/task.yml
     - put: kurma-api-aci-image
@@ -285,9 +285,9 @@ jobs:
         skip_download: true
     - get: kurma-source
       passed: [ rc ]
-      trigger: true
     - get: kurmaos-source
     - get: version
+      trigger: true
   - task: build
     file: kurmaos-source/code/kurma-server/task.yml
   - put: kurma-server-linux-amd64
@@ -303,9 +303,9 @@ jobs:
         skip_download: true
     - get: kurma-source
       passed: [ rc ]
-      trigger: true
     - get: kurmaos-source
     - get: version
+      trigger: true
   - aggregate:
     - task: linux
       file: kurmaos-source/code/kurma-cli/task-linux.yml
@@ -337,10 +337,10 @@ jobs:
         passed: [ kurma-api-aci ]
       - get: kurma-source
         passed: [ rc, kurma-api-aci, console-aci ]
-        trigger: true
       - get: kurmaos-source
         passed: [ rc ]
       - get: version
+        trigger: true
     - task: build
       file: kurmaos-source/code/kurma-init/task.yml
       config:
@@ -412,22 +412,14 @@ jobs:
     - get: version
       passed: [ shipit ]
       trigger: true
-    - get: kurma-source
-      passed: [ shipit ]
     - get: kurmaos-source
       passed: [ shipit ]
     - get: kurma-cli-linux-amd64
-      passed: [ shipit ]
     - get: kurma-cli-darwin-amd64
-      passed: [ shipit ]
     - get: kurma-server-linux-amd64
-      passed: [ shipit ]
     - get: disk-vmware-image
-      passed: [ shipit ]
     - get: disk-virtualbox-image
-      passed: [ shipit ]
     - get: kurma-upgrader-aci-image
-      passed: [ shipit ]
   - task: prep
     file: kurmaos-source/ci/rollout/task.yml
   - aggregate:
@@ -461,7 +453,6 @@ jobs:
   - aggregate:
     - get: version
       passed: [ rollout ]
-      trigger: true
     - get: release-kurma-server-linux-amd64
       passed: [ rollout ]
     - get: release-kurma-cli-linux-amd64
@@ -513,18 +504,6 @@ jobs:
       passed: [ rc ]
     - get: kurmaos-source
       passed: [ rc ]
-    - get: kurma-cli-linux-amd64
-      passed: [ kurma-cli ]
-    - get: kurma-cli-darwin-amd64
-      passed: [ kurma-cli ]
-    - get: kurma-server-linux-amd64
-      passed: [ kurma-server ]
-    - get: disk-vmware-image
-      passed: [ disk-vmware ]
-    - get: disk-virtualbox-image
-      passed: [ disk-virtualbox ]
-    - get: kurma-upgrader-aci-image
-      passed: [ kurma-upgrader-aci ]
   - aggregate:
     - put: version
       params: { file: version/number }
