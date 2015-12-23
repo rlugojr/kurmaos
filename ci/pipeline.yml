@@ -333,8 +333,10 @@ jobs:
         passed: [ udev-aci ]
       - get: console-aci-image
         passed: [ console-aci ]
+        trigger: true
       - get: kurma-api-aci-image
         passed: [ kurma-api-aci ]
+        trigger: true
       - get: kurma-source
         passed: [ rc, kurma-api-aci, console-aci ]
       - get: kurmaos-source
@@ -420,6 +422,13 @@ jobs:
     - get: disk-vmware-image
     - get: disk-virtualbox-image
     - get: kurma-upgrader-aci-image
+      # Ensure rollout only triggers on fully built images. Sometimes,
+      # kurma-init may build multiple times with the version bump, this ensures
+      # some of the hoops are all closed.
+    - get: console-aci-image
+      passed: [ kurma-init ]
+    - get: kurma-api-aci-image
+      passed: [ kurma-init ]
   - task: prep
     file: kurmaos-source/ci/rollout/task.yml
   - aggregate:
