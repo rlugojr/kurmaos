@@ -3,7 +3,14 @@
     "isolators": [
       { "name": "host/api-access", "value": true },
       { "name": "host/privileged", "value": true },
-      { "name": "os/linux/namespaces", "value": [ "mount" ] }
+      {
+        "name": "os/linux/namespaces",
+        "value": {
+          "ipc": "host",
+          "net": "host",
+          "uts": "host"
+        }
+      }
     ]
   }
 }
