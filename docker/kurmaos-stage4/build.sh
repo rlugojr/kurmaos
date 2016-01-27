@@ -31,7 +31,7 @@ echo "=sys-boot/grub-2.02_beta2_p20150727-r1" >> /etc/portage/package.unmask
 echo "=sys-boot/syslinux-4.07-r1" >> /etc/portage/package.unmask
 
 echo "=dev-lang/go-1.5.3" >> /etc/portage/package.accept_keywords
-echo "=dev-lang/go-bootstrap-1.4.2" >> /etc/portage/package.accept_keywords
+echo "=dev-lang/go-bootstrap-1.4.3" >> /etc/portage/package.accept_keywords
 
 emerge \
     =kurmaos-base/vboot_reference-1.0-r887 \
@@ -55,11 +55,7 @@ emerge \
     sys-fs/eudev
 
 # install acbuild, for creating aci images
-cd /tmp
-git clone https://github.com/appc/acbuild.git
-cd acbuild
-./build
-cp bin/acbuild /usr/bin/acbuild
+curl -L https://github.com/appc/acbuild/releases/download/v0.2.2/acbuild.tar.gz | tar xzv -C /usr/bin
 
 # cleanup
 rm -rf /usr/portage
