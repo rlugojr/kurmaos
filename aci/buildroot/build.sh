@@ -5,15 +5,15 @@ INSTALLPATH=$BASE_PATH/rootfs
 set -e -x
 
 # download buildroot
-wget http://buildroot.uclibc.org/downloads/buildroot-2015.08.1.tar.gz
-tar -xf buildroot-2015.08.1.tar.gz
+wget https://buildroot.org/downloads/buildroot-2015.11.1.tar.gz
+tar -xf buildroot-2015.11.1.tar.gz
 
 # setup config files
-cp kurmaos-source/aci/buildroot/buildroot.config buildroot-2015.08.1/.config
-cp kurmaos-source/aci/buildroot/busybox.config buildroot-2015.08.1/busybox.config
+cp kurmaos-source/aci/buildroot/buildroot.config buildroot-2015.11.1/.config
+cp kurmaos-source/aci/buildroot/busybox.config buildroot-2015.11.1/busybox.config
 
 # build
-cd buildroot-2015.08.1
+cd buildroot-2015.11.1
 make
 
 # extract and clean it out some
