@@ -19,7 +19,7 @@ go build -ldflags "$BUILD_LDFLAGS" -a -o $BASE_PATH/rootfs/kurma-api go/src/gith
 
 cd $BASE_PATH/rootfs
 
-# setup etc and lib folders
+# setup lib
 mkdir lib
 ln -s lib lib64
 

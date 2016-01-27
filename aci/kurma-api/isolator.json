@@ -1,7 +1,14 @@
 {
   "app": {
     "isolators": [
-      { "name": "host/api-access", "value": true }
+      { "name": "host/api-access", "value": true },
+      {
+        "name": "os/linux/namespaces",
+        "value": {
+          "net": "host",
+          "uts": "host"
+        }
+      }
     ]
   }
 }
