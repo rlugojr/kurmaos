@@ -64,7 +64,7 @@ jobs:
     privileged: true
 
 - name: kurmaos-stage3
-  serial: true
+  serial_groups: [ docker ]
   plan:
   - aggregate:
     - task: tag-date
@@ -89,7 +89,7 @@ jobs:
       skip_download: true
 
 - name: kurmaos-stage4
-  serial: true
+  serial_groups: [ docker ]
   plan:
   - aggregate:
     - get: kurmaos-stage3-image
@@ -122,7 +122,7 @@ jobs:
       skip_download: true
 
 - name: kurmaos-kernel
-  serial: true
+  serial_groups: [ docker ]
   plan:
   - aggregate:
     - get: kurmaos-stage4-image
@@ -155,7 +155,7 @@ jobs:
       skip_download: true
 
 - name: docker-aws-tools
-  serial: true
+  serial_groups: [ docker ]
   plan:
   - get: kurmaos-source
   - task: tag-date
@@ -353,7 +353,7 @@ jobs:
         from: kurma-init.tar.gz
 
 - name: kurmaos-disk
-  serial: true
+  serial_groups: [ packaging ]
   plan:
     - aggregate:
       - get: kurma-init-build
@@ -368,6 +368,7 @@ jobs:
         from: raw.img.gz
 
 - name: disk-vmware
+  serial_groups: [ packaging ]
   plan:
     - aggregate:
       - get: kurmaos-disk-image
@@ -382,6 +383,7 @@ jobs:
         from: kurmaos.zip
 
 - name: disk-virtualbox
+  serial_groups: [ packaging ]
   plan:
     - aggregate:
       - get: kurmaos-disk-image
@@ -395,6 +397,7 @@ jobs:
         from: kurmaos.zip
 
 - name: disk-openstack
+  serial_groups: [ packaging ]
   plan:
     - aggregate:
       - get: kurmaos-disk-image
