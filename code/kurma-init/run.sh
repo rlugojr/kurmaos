@@ -12,7 +12,7 @@ touch ../../output/$output_filename
 docker run --rm \
        -v `pwd`/../..:/tmp/build/kurmaos-source \
        -v `pwd`/../../../kurma:/tmp/build/kurma-source \
-       -v `pwd`/../../output/buildroot.aci:/tmp/build/buildroot-aci-image/buildroot.aci \
+       -v `pwd`/../../output/busybox.aci:/tmp/build/busybox-aci-image/busybox.aci \
        -v `pwd`/../../output/console.aci:/tmp/build/console-aci-image/console.aci \
        -v `pwd`/../../output/ntp.aci:/tmp/build/ntp-aci-image/ntp.aci \
        -v `pwd`/../../output/udev.aci:/tmp/build/udev-aci-image/udev.aci \

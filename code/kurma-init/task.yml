@@ -5,7 +5,7 @@ image: docker:///apcera/kurmaos-kernel
 
 inputs:
   - name: ntp-aci-image
-  - name: buildroot-aci-image
+  - name: busybox-aci-image
   - name: console-aci-image
   - name: udev-aci-image
   - name: kurma-api-aci-image
