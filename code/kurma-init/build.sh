@@ -25,7 +25,7 @@ go version
 go build -ldflags "$BUILD_LDFLAGS" -o kurma $TARGET/kurma-init.go
 
 # copy in the acis
-cp $BASE_PATH/buildroot-aci-image/buildroot.aci buildroot.aci
+cp $BASE_PATH/busybox-aci-image/busybox.aci busybox.aci
 cp $BASE_PATH/console-aci-image/console.aci console.aci
 cp $BASE_PATH/ntp-aci-image/ntp.aci ntp.aci
 cp $BASE_PATH/udev-aci-image/udev.aci udev.aci
