@@ -4,7 +4,7 @@ platform: linux
 image: docker:///apcera/kurmaos-stage4
 
 inputs:
-  - name: buildroot-aci-image
+  - name: busybox-aci-image
   - name: kurma-cli-linux-amd64
   - name: kurmaos-source
   - name: kurma-source
