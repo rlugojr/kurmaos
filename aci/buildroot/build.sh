@@ -14,13 +14,8 @@ cp kurmaos-source/aci/buildroot/busybox.config buildroot-2015.11.1/busybox.confi
 
 # build
 cd buildroot-2015.11.1
-make
-
-# extract and clean it out some
-mkdir $INSTALLPATH
-tar -xzf output/images/rootfs.tar.gz -C $INSTALLPATH --exclude=./dev
-mkdir -p $INSTALLPATH/dev
-rm -f $INSTALLPATH/init $INSTALLPATH/linuxrc
+make oldconfig
+make --quiet
 
 # compress
-tar -czf $BASE_PATH/buildroot.tar.gz -C $INSTALLPATH .
+cp output/images/rootfs.tar.gz $BASE_PATH/buildroot.tar.gz

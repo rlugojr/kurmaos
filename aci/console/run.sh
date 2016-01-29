@@ -10,7 +10,7 @@ output_filename=console.aci
 touch ../../output/$output_filename
 
 docker run --rm \
-       -v `pwd`/../../output/buildroot.tar.gz:/tmp/build/buildroot-base/buildroot.tar.gz \
+       -v `pwd`/../../output/buildroot.aci:/tmp/build/buildroot-aci-image/buildroot.aci \
        -v `pwd`/../../output/kurma-cli-linux-amd64.tar.gz:/tmp/build/kurma-cli-linux-amd64/kurma-cli-linux-amd64.tar.gz \
        -v `pwd`/../..:/tmp/build/kurmaos-source \
        -v `pwd`/../../../kurma:/tmp/build/kurma-source \

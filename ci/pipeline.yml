@@ -13,7 +13,6 @@ groups:
   - kurma-cli
   - kurma-server
   - kurma-upgrader-aci
-  - rc
 - name: docker
   jobs:
   - kurmaos-stage3
@@ -23,6 +22,7 @@ groups:
 - name: acis
   jobs:
   - buildroot
+  - buildroot-aci
   - ntp-aci
   - udev-aci
   - kurma-api-aci
@@ -38,13 +38,13 @@ groups:
   - disk-openstack
 - name: ship
   jobs:
-  - ci
   - major
   - minor
   - patch
   - rc
+  - build-it
   - rollout
-  - shipit
+  - ship-it
   - github-it
 
 jobs:
@@ -52,10 +52,6 @@ jobs:
 - name: ci
   plan:
   - aggregate:
-    - get: kurmaos-stage4-image
-      passed: [ kurmaos-stage4 ]
-      params:
-        skip_download: true
     - get: kurma-source
       trigger: true
     - get: kurmaos-source
@@ -63,6 +59,14 @@ jobs:
     file: kurmaos-source/ci/test/task.yml
     privileged: true
 
+
+
+
+  ##################################################
+  ##
+  ##  DOCKER IMAGES
+  ##
+  ##################################################
 - name: kurmaos-stage3
   serial_groups: [ docker ]
   plan:
@@ -87,7 +91,6 @@ jobs:
       pull_repository: gentoo/stage3-amd64
     get_params:
       skip_download: true
-
 - name: kurmaos-stage4
   serial_groups: [ docker ]
   plan:
@@ -120,7 +123,6 @@ jobs:
       tag: tag-date/image-tag
     get_params:
       skip_download: true
-
 - name: kurmaos-kernel
   serial_groups: [ docker ]
   plan:
@@ -153,7 +155,6 @@ jobs:
       tag: tag-date/image-tag
     get_params:
       skip_download: true
-
 - name: docker-aws-tools
   serial_groups: [ docker ]
   plan:
@@ -181,14 +182,55 @@ jobs:
     get_params:
       skip_download: true
 
+
+
+
+  ##################################################
+  ##
+  ##  ACI IMAGES
+  ##
+  ##################################################
+- name: buildroot
+  plan:
+    - aggregate:
+      - get: kurmaos-source
+    - task: build
+      file: kurmaos-source/aci/buildroot/task.yml
+    - put: buildroot-base
+      params:
+        from: buildroot.tar.gz
+- name: buildroot-aci
+  plan:
+    - aggregate:
+      - get: kurmaos-source
+      - get: buildroot-base
+        passed: [ buildroot ]
+    - task: build
+      file: kurmaos-source/aci/buildroot-aci/task.yml
+    - put: buildroot-aci
+      params:
+        from: buildroot.aci
+- name: console-aci
+  plan:
+    - aggregate:
+      - get: buildroot-aci
+        passed: [ buildroot-aci ]
+      - get: kurma-source
+        passed: [ ci, kurma-cli ]
+      - get: kurmaos-source
+      - get: kurma-cli-linux-amd64
+      - get: apcera-util-source
+    - task: build
+      file: kurmaos-source/aci/console/task.yml
+    - put: console-aci-image
+      params:
+        from: console.aci
 - name: ntp-aci
   plan:
-    - get: kurmaos-stage4-image
-      passed: [ kurmaos-stage4 ]
-      trigger: true
-      params:
-        skip_download: true
-    - get: kurmaos-source
+    - aggregate:
+      - get: buildroot-aci
+        passed: [ buildroot-aci ]
+      - get: kurmaos-source
     - task: build
       file: kurmaos-source/aci/ntp/task.yml
     - put: ntp-aci-image
@@ -196,12 +238,10 @@ jobs:
         from: ntp.aci
 - name: udev-aci
   plan:
-    - get: kurmaos-stage4-image
-      passed: [ kurmaos-stage4 ]
-      trigger: true
-      params:
-        skip_download: true
-    - get: kurmaos-source
+    - aggregate:
+      - get: buildroot-aci
+        passed: [ buildroot-aci ]
+      - get: kurmaos-source
     - task: build
       file: kurmaos-source/aci/udev/task.yml
     - put: udev-aci-image
@@ -210,16 +250,10 @@ jobs:
 - name: kurma-api-aci
   plan:
     - aggregate:
-      - get: kurmaos-stage4-image
-        passed: [ kurmaos-stage4 ]
-        trigger: true
-        params:
-          skip_download: true
       - get: kurmaos-source
       - get: kurma-source
-        passed: [ rc ]
+        passed: [ ci ]
       - get: version
-        trigger: true
     - task: build
       file: kurmaos-source/aci/kurma-api/task.yml
     - put: kurma-api-aci-image
@@ -228,84 +262,44 @@ jobs:
 - name: kurma-upgrader-aci
   plan:
     - aggregate:
-      - get: kurmaos-stage4-image
-        passed: [ kurmaos-stage4 ]
-        trigger: true
-        params:
-          skip_download: true
       - get: kurmaos-source
       - get: kurma-source
+        passed: [ ci, kurma-init ]
       - get: kurma-init-build
-        trigger: true
-        passed: [ kurma-init ]
+      - get: version
     - task: build
       file: kurmaos-source/aci/kurma-upgrader/task.yml
     - put: kurma-upgrader-aci-image
       params:
         from: kurma-upgrader.aci
-- name: buildroot
-  plan:
-    - aggregate:
-      - get: kurmaos-stage4-image
-        passed: [ kurmaos-stage4 ]
-        params:
-          skip_download: true
-      - get: kurmaos-source
-    - task: build
-      file: kurmaos-source/aci/buildroot/task.yml
-    - put: buildroot-base
-      params:
-        from: buildroot.tar.gz
-- name: console-aci
-  plan:
-    - aggregate:
-      - get: buildroot-base
-        passed: [ buildroot ]
-        trigger: true
-      - get: kurma-cli-linux-amd64
-        passed: [ kurma-cli ]
-        trigger: true
-      - get: kurma-source
-        passed: [ rc ]
-        trigger: true
-      - get: kurmaos-source
-      - get: apcera-util-source
-    - task: build
-      file: kurmaos-source/aci/console/task.yml
-    - put: console-aci-image
-      params:
-        from: console.aci
 
+
+
+
+  ##################################################
+  ##
+  ##  CODE PRODUCTS
+  ##
+  ##################################################
 - name: kurma-server
   plan:
   - aggregate:
-    - get: kurmaos-stage4-image
-      passed: [ kurmaos-stage4 ]
-      params:
-        skip_download: true
     - get: kurma-source
-      passed: [ rc ]
+      passed: [ ci ]
     - get: kurmaos-source
     - get: version
-      trigger: true
   - task: build
     file: kurmaos-source/code/kurma-server/task.yml
   - put: kurma-server-linux-amd64
     params:
       from: kurma-server-linux-amd64.tar.gz
-
 - name: kurma-cli
   plan:
   - aggregate:
-    - get: kurmaos-stage4-image
-      passed: [ kurmaos-stage4 ]
-      params:
-        skip_download: true
     - get: kurma-source
-      passed: [ rc ]
+      passed: [ ci ]
     - get: kurmaos-source
     - get: version
-      trigger: true
   - aggregate:
     - task: linux
       file: kurmaos-source/code/kurma-cli/task-linux.yml
@@ -318,31 +312,21 @@ jobs:
     - put: kurma-cli-darwin-amd64
       params:
         from: darwin/kurma-cli-darwin-amd64.tar.gz
-
 - name: kurma-init
   plan:
     - aggregate:
-      - get: kurmaos-kernel-image
-        passed: [ kurmaos-kernel ]
-        trigger: true
-        params:
-          skip_download: true
       - get: ntp-aci-image
         passed: [ ntp-aci ]
       - get: udev-aci-image
         passed: [ udev-aci ]
       - get: console-aci-image
         passed: [ console-aci ]
-        trigger: true
       - get: kurma-api-aci-image
         passed: [ kurma-api-aci ]
-        trigger: true
       - get: kurma-source
-        passed: [ rc, kurma-api-aci, console-aci ]
+        passed: [ ci ]
       - get: kurmaos-source
-        passed: [ rc ]
       - get: version
-        trigger: true
     - task: build
       file: kurmaos-source/code/kurma-init/task.yml
       config:
@@ -352,73 +336,80 @@ jobs:
       params:
         from: kurma-init.tar.gz
 
+
+
+
+  ##################################################
+  ##
+  ##  PACKAGING
+  ##
+  ##################################################
 - name: kurmaos-disk
   serial_groups: [ packaging ]
   plan:
     - aggregate:
       - get: kurma-init-build
         passed: [ kurma-init ]
-        trigger: true
       - get: kurmaos-source
+      - get: version
     - task: build
       file: kurmaos-source/packaging/kurmaos-disk/task.yml
       privileged: true
     - put: kurmaos-disk-image
       params:
         from: raw.img.gz
-
 - name: disk-vmware
   serial_groups: [ packaging ]
   plan:
     - aggregate:
       - get: kurmaos-disk-image
         passed: [ kurmaos-disk ]
-        trigger: true
       - get: kurmaos-source
+      - get: version
     - task: build
       file: kurmaos-source/packaging/disk-vmware/task.yml
       privileged: true
     - put: disk-vmware-image
       params:
         from: kurmaos.zip
-
 - name: disk-virtualbox
   serial_groups: [ packaging ]
   plan:
     - aggregate:
       - get: kurmaos-disk-image
         passed: [ kurmaos-disk ]
-        trigger: true
       - get: kurmaos-source
+      - get: version
     - task: build
       file: kurmaos-source/packaging/disk-virtualbox/task.yml
     - put: disk-virtualbox-image
       params:
         from: kurmaos.zip
-
 - name: disk-openstack
   serial_groups: [ packaging ]
   plan:
     - aggregate:
       - get: kurmaos-disk-image
         passed: [ kurmaos-disk ]
-        trigger: true
       - get: kurmaos-source
+      - get: version
     - task: build
       file: kurmaos-source/packaging/disk-openstack/task.yml
     - put: disk-openstack-image
       params:
         from: kurmaos.zip
 
+
+
+
 - name: rollout
   serial: true
   plan:
   - aggregate:
     - get: version
-      passed: [ shipit ]
-      trigger: true
+      passed: [ ship-it ]
     - get: kurmaos-source
-      passed: [ shipit ]
+      passed: [ ship-it ]
     - get: kurma-cli-linux-amd64
     - get: kurma-cli-darwin-amd64
     - get: kurma-server-linux-amd64
@@ -506,19 +497,25 @@ jobs:
         - "**/*.zip"
         - "**/*.aci"
 
-- name: shipit
+- name: build-it
   serial_groups: [ version ]
   plan:
   - aggregate:
     - get: version
       params: { bump: final }
     - get: kurma-source
-      passed: [ rc ]
     - get: kurmaos-source
-      passed: [ rc ]
+- name: ship-it
+  serial_groups: [ version ]
+  plan:
   - aggregate:
-    - put: version
-      params: { file: version/number }
+    - get: version
+      passed: [ build-it ]
+    - get: kurma-source
+      passed: [ build-it ]
+    - get: kurmaos-source
+      passed: [ build-it ]
+  - aggregate:
     - put: kurma-source
       params:
         repository: kurma-source
@@ -533,9 +530,7 @@ jobs:
   plan:
   - get: kurma-source
     passed: [ ci ]
-    trigger: true
   - get: kurmaos-source
-    trigger: true
   - get: version
     params: { pre: rc }
   - put: version
@@ -561,9 +556,7 @@ jobs:
   serial_groups: [ version ]
   plan:
   - get: version
-    passed: [ shipit ]
     params: { bump: patch, pre: rc }
-    trigger: true
   - put: version
     params: { file: version/number }
 
@@ -643,6 +636,14 @@ resources:
     access_key_id: {{aws-access-key}}
     secret_access_key: {{aws-secret-key}}
     versioned_file: aci/buildroot.tar.gz
+- name: buildroot-aci
+  type: s3
+  source:
+    bucket: kurmaos-artifacts
+    region_name: us-west-2
+    access_key_id: {{aws-access-key}}
+    secret_access_key: {{aws-secret-key}}
+    versioned_file: aci/buildroot.aci
 - name: ntp-aci-image
   type: s3
   source:
