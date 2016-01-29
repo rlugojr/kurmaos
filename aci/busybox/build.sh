@@ -30,7 +30,7 @@ acbuild environment add PATH "/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:
 acbuild set-exec /bin/sh
 acbuild set-user 0
 acbuild set-group 0
-acbuild set-name apcera.com/kurma/buildroot
+acbuild set-name apcera.com/kurma/busybox
 
-acbuild write --overwrite buildroot.aci
+acbuild write --overwrite busybox.aci
 acbuild end

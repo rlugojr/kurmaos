@@ -8,4 +8,4 @@ inputs:
   - name: kurmaos-source
 
 run:
-  path: kurmaos-source/aci/buildroot-aci/build.sh
+  path: kurmaos-source/aci/busybox/build.sh

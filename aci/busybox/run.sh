@@ -6,7 +6,7 @@ set -e
 cd $(dirname $0)
 
 # Create the output file ahead of time to ensure it is available.
-output_filename=buildroot.aci
+output_filename=busybox.aci
 touch ../../output/$output_filename
 
 docker run --rm \
@@ -15,6 +15,6 @@ docker run --rm \
        -v `pwd`/../../output/$output_filename:/tmp/build/z$output_filename \
        -w /tmp/build \
        apcera/kurmaos-stage4 \
-       bash -c "./kurmaos-source/aci/buildroot-aci/build.sh && cp $output_filename z$output_filename"
+       bash -c "./kurmaos-source/aci/busybox/build.sh && cp $output_filename z$output_filename"
 
 echo "Compiled output available in output/$output_filename"

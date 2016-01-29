@@ -54,7 +54,7 @@ acbuild set-user 0
 acbuild set-group 0
 acbuild set-name apcera.com/kurma/console
 
-acbuild dependency add apcera.com/kurma/buildroot --image-id="sha512-$(shasum -a 512 buildroot-aci-image/buildroot.aci | cut -d" " -f1)"
+acbuild dependency add apcera.com/kurma/busybox --image-id="sha512-$(shasum -a 512 busybox-aci-image/busybox.aci | cut -d" " -f1)"
 
 # add our custom isolators
 jq -c -s '.[0] * .[1]' .acbuild/currentaci/manifest kurmaos-source/aci/console/isolator.json > manifest

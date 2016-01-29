@@ -22,7 +22,7 @@ groups:
 - name: acis
   jobs:
   - buildroot
-  - buildroot-aci
+  - busybox-aci
   - ntp-aci
   - udev-aci
   - kurma-api-aci
@@ -199,22 +199,22 @@ jobs:
     - put: buildroot-base
       params:
         from: buildroot.tar.gz
-- name: buildroot-aci
+- name: busybox-aci
   plan:
     - aggregate:
       - get: kurmaos-source
       - get: buildroot-base
         passed: [ buildroot ]
     - task: build
-      file: kurmaos-source/aci/buildroot-aci/task.yml
-    - put: buildroot-aci
+      file: kurmaos-source/aci/busybox/task.yml
+    - put: busybox-aci-image
       params:
-        from: buildroot.aci
+        from: busybox.aci
 - name: console-aci
   plan:
     - aggregate:
-      - get: buildroot-aci
-        passed: [ buildroot-aci ]
+      - get: busybox-aci-image
+        passed: [ busybox-aci ]
       - get: kurma-source
         passed: [ ci, kurma-cli ]
       - get: kurmaos-source
@@ -228,8 +228,6 @@ jobs:
 - name: ntp-aci
   plan:
     - aggregate:
-      - get: buildroot-aci
-        passed: [ buildroot-aci ]
       - get: kurmaos-source
     - task: build
       file: kurmaos-source/aci/ntp/task.yml
@@ -238,10 +236,7 @@ jobs:
         from: ntp.aci
 - name: udev-aci
   plan:
-    - aggregate:
-      - get: buildroot-aci
-        passed: [ buildroot-aci ]
-      - get: kurmaos-source
+    - get: kurmaos-source
     - task: build
       file: kurmaos-source/aci/udev/task.yml
     - put: udev-aci-image
@@ -636,14 +631,14 @@ resources:
     access_key_id: {{aws-access-key}}
     secret_access_key: {{aws-secret-key}}
     versioned_file: aci/buildroot.tar.gz
-- name: buildroot-aci
+- name: busybox-aci-image
   type: s3
   source:
     bucket: kurmaos-artifacts
     region_name: us-west-2
     access_key_id: {{aws-access-key}}
     secret_access_key: {{aws-secret-key}}
-    versioned_file: aci/buildroot.aci
+    versioned_file: aci/busybox.aci
 - name: ntp-aci-image
   type: s3
   source:
