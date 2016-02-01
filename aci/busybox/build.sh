@@ -16,21 +16,23 @@ echo -n '' > rootfs/etc/hosts
 rm rootfs/etc/resolv.conf
 
 # generate the aci
-acbuild begin
+acbuild --no-history begin
 for i in $BASE_PATH/rootfs/* ; do
     j=$(basename $i)
-    acbuild copy $i $j
+    acbuild --no-history copy $i $j
 done
 
-acbuild label add os linux
-acbuild label add version latest
+version=$(date +%Y.%m.%d-`cd kurmaos-source && git rev-parse HEAD | cut -c1-8`)
+acbuild --no-history label add os linux
+acbuild --no-history label add arch amd64
+acbuild --no-history label add version v$version
 
-acbuild environment add PATH "/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
+acbuild --no-history environment add PATH "/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
 
-acbuild set-exec /bin/sh
-acbuild set-user 0
-acbuild set-group 0
-acbuild set-name apcera.com/kurma/busybox
+acbuild --no-history set-exec /bin/sh
+acbuild --no-history set-user 0
+acbuild --no-history set-group 0
+acbuild --no-history set-name apcera.com/kurma/busybox
 
-acbuild write --overwrite busybox.aci
-acbuild end
+acbuild --no-history write --overwrite busybox.aci
+acbuild --no-history end

@@ -30,7 +30,7 @@
     ]
   },
   "services": {
-    "udev": { "enabled": true, "aci": "file:///udev.aci" },
+    "udev": { "enabled": true, "aci": "file:///acis/udev.aci" },
     "ntp": { "enabled": true, "aci": "file:///ntp.aci",
              "servers": [ "0.pool.ntp.org", "1.pool.ntp.org", "2.pool.ntp.org", "3.pool.ntp.org" ] },
     "console": { "enabled": true, "aci": "file:///console.aci",

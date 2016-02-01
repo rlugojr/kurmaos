@@ -1,6 +1,7 @@
 #!/bin/bash
 
 BASE_PATH=`pwd`
+
 set -e -x
 
 # setup for building go
@@ -40,25 +41,30 @@ ln -s /host/proc/1/rootfs/lib/modules rootfs/lib/modules
 
 # generate the aci
 cd $BASE_PATH
-acbuild begin
+acbuild --no-history begin
 for i in $BASE_PATH/rootfs/* ; do
     j=$(basename $i)
-    acbuild copy $i $j
+    acbuild --no-history copy $i $j
 done
 
-acbuild label add os linux
-acbuild label add version latest
+version=$(date +%Y.%m.%d-`cd kurmaos-source && git rev-parse HEAD | cut -c1-8`)
+acbuild --no-history label add os linux
+acbuild --no-history label add arch amd64
+acbuild --no-history label add version v$version
 
-acbuild set-exec /start.sh
-acbuild set-user 0
-acbuild set-group 0
-acbuild set-name apcera.com/kurma/console
+acbuild --no-history set-exec /start.sh
+acbuild --no-history set-user 0
+acbuild --no-history set-group 0
+acbuild --no-history set-name apcera.com/kurma/console
 
-acbuild dependency add apcera.com/kurma/busybox --image-id="sha512-$(shasum -a 512 busybox-aci-image/busybox.aci | cut -d" " -f1)"
+depversion=$(go run kurmaos-source/aci/vergetter.go busybox-aci-image/busybox.aci)
+dephash=$(shasum -a 512 busybox-aci-image/busybox.aci | cut -d" " -f1)
+acbuild --no-history dependency add apcera.com/kurma/busybox --label version=$depversion --image-id="sha512-$dephash"
 
 # add our custom isolators
-jq -c -s '.[0] * .[1]' .acbuild/currentaci/manifest kurmaos-source/aci/console/isolator.json > manifest
-mv manifest .acbuild/currentaci/manifest
+acbuild --no-history isolator add host/privileged kurmaos-source/aci/console/isolator-true.json
+acbuild --no-history isolator add host/api-access kurmaos-source/aci/console/isolator-true.json
+acbuild --no-history isolator add os/linux/namespaces kurmaos-source/aci/console/isolator-namespaces.json
 
-acbuild write --overwrite console.aci
-acbuild end
+acbuild --no-history write --overwrite console.aci
+acbuild --no-history end

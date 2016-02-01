@@ -1,0 +1,5 @@
+{
+  "ipc": "host",
+  "net": "host",
+  "uts": "host"
+}

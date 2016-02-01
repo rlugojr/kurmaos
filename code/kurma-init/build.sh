@@ -5,10 +5,11 @@ BASE_PATH=`pwd`
 set -e -x
 
 # calculate ldflags for the version number
-BUILD_LDFLAGS=""
+version="$(git --git-dir=$BASE_PATH/kurma-source/.git describe --tags | cut -d'-' -f1)+git"
 if [[ -f $BASE_PATH/version/number ]]; then
-    BUILD_LDFLAGS="-X github.com/apcera/kurma/stage1/client.version=$(cat $BASE_PATH/version/number)"
+    verison=$(cat $BASE_PATH/version/number)
 fi
+BUILD_LDFLAGS="-X github.com/apcera/kurma/stage1/client.version=$version"
 
 # setup the gopath
 mkdir -p go/src/github.com/apcera
@@ -25,11 +26,12 @@ go version
 go build -ldflags "$BUILD_LDFLAGS" -o kurma $TARGET/kurma-init.go
 
 # copy in the acis
-cp $BASE_PATH/busybox-aci-image/busybox.aci busybox.aci
-cp $BASE_PATH/console-aci-image/console.aci console.aci
-cp $BASE_PATH/ntp-aci-image/ntp.aci ntp.aci
-cp $BASE_PATH/udev-aci-image/udev.aci udev.aci
-cp $BASE_PATH/kurma-api-aci-image/kurma-api.aci kurma-api.aci
+mkdir acis
+cp $BASE_PATH/busybox-aci-image/busybox.aci acis/busybox.aci
+cp $BASE_PATH/console-aci-image/console.aci acis/console.aci
+cp $BASE_PATH/ntp-aci-image/ntp.aci acis/ntp.aci
+cp $BASE_PATH/udev-aci-image/udev.aci acis/udev.aci
+cp $BASE_PATH/kurma-api-aci-image/kurma-api.aci acis/kurma-api.aci
 
 # configure the init script
 ln -s kurma init

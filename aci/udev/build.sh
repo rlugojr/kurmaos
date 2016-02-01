@@ -50,7 +50,7 @@ LD_TRACE_LOADED_OBJECTS=1 ./bin/udevadm | grep so | grep -v linux-vdso.so.1 \
 echo "/lib" > etc/ld.so.conf
 ldconfig -r . -C etc/ld.so.cache -f etc/ld.so.conf
 
-# create a symlink so the console can access kernel modules from the host
+# create a symlink so the udev can access kernel modules from the host
 ln -s /host/proc/1/root/lib/modules lib/modules
 ln -s /host/proc/1/root/lib/firmware lib/firmware
 
@@ -59,25 +59,27 @@ udevadm hwdb --update --root=`pwd`
 
 # generate the aci
 cd $BASE_PATH
-acbuild begin
+acbuild --no-history begin
 for i in $BASE_PATH/rootfs/* ; do
     j=$(basename $i)
-    acbuild copy $i $j
+    acbuild --no-history copy $i $j
 done
 
-acbuild label add os linux
-acbuild label add version latest
+version=$(date +%Y.%m.%d-`cd kurmaos-source && git rev-parse HEAD | cut -c1-8`)
+acbuild --no-history label add os linux
+acbuild --no-history label add arch amd64
+acbuild --no-history label add version v$version
 
-acbuild environment add PATH "/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
+acbuild --no-history environment add PATH "/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
 
-acbuild set-exec /start.sh
-acbuild set-user 0
-acbuild set-group 0
-acbuild set-name apcera.com/kurma/udev
+acbuild --no-history set-exec /start.sh
+acbuild --no-history set-user 0
+acbuild --no-history set-group 0
+acbuild --no-history set-name apcera.com/kurma/udev
 
 # add our custom isolators
-jq -c -s '.[0] * .[1]' .acbuild/currentaci/manifest kurmaos-source/aci/udev/isolator.json > manifest
-mv manifest .acbuild/currentaci/manifest
+acbuild --no-history isolator add host/privileged kurmaos-source/aci/udev/isolator-true.json
+acbuild --no-history isolator add os/linux/namespaces kurmaos-source/aci/udev/isolator-namespaces.json
 
-acbuild write --overwrite udev.aci
-acbuild end
+acbuild --no-history write --overwrite udev.aci
+acbuild --no-history end

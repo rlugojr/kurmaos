@@ -7,6 +7,7 @@ inputs:
   - name: kurma-source
   - name: kurmaos-source
   - name: kurma-init-build
+  - name: version
 
 run:
   path: kurmaos-source/aci/kurma-upgrader/build.sh

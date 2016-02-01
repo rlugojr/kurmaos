@@ -4,6 +4,11 @@ export BASE_PATH=`pwd`
 
 set -e -x
 
+version="$(git --git-dir=$BASE_PATH/kurma-source/.git describe --tags | cut -d'-' -f1)+git"
+if [[ -f $BASE_PATH/version/number ]]; then
+    verison=$(cat $BASE_PATH/version/number)
+fi
+
 mkdir $BASE_PATH/rootfs
 
 mkdir -p go/src/github.com/apcera
@@ -42,23 +47,25 @@ LD_TRACE_LOADED_OBJECTS=1 ./kexec | grep so | grep -v linux-vdso.so.1 \
 
 # generate the aci
 cd $BASE_PATH
-acbuild begin
+acbuild --no-history begin
 for i in $BASE_PATH/rootfs/* ; do
     j=$(basename $i)
-    acbuild copy $i $j
+    acbuild --no-history copy $i $j
 done
 
-acbuild label add os linux
-acbuild label add version latest
+acbuild --no-history label add os linux
+acbuild --no-history label add arch amd64
+acbuild --no-history label add version v$version
 
-acbuild set-exec /kurma-upgrader
-acbuild set-user 0
-acbuild set-group 0
-acbuild set-name apcera.com/kurma/upgrader
+acbuild --no-history set-exec /kurma-upgrader
+acbuild --no-history set-user 0
+acbuild --no-history set-group 0
+acbuild --no-history set-name apcera.com/kurma/upgrader
 
 # add our custom isolators
-jq -c -s '.[0] * .[1]' .acbuild/currentaci/manifest kurmaos-source/aci/kurma-upgrader/isolator.json > manifest
-mv manifest .acbuild/currentaci/manifest
+acbuild --no-history isolator add host/privileged kurmaos-source/aci/kurma-upgrader/isolator-true.json
+acbuild --no-history isolator add host/api-access kurmaos-source/aci/kurma-upgrader/isolator-true.json
+acbuild --no-history isolator add os/linux/namespaces kurmaos-source/aci/kurma-upgrader/isolator-namespaces.json
 
-acbuild write --overwrite kurma-upgrader.aci
-acbuild end
+acbuild --no-history write --overwrite kurma-upgrader.aci
+acbuild --no-history end

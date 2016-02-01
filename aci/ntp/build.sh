@@ -36,23 +36,25 @@ ldconfig -r . -C etc/ld.so.cache -f etc/ld.so.conf
 
 # generate the aci
 cd $BASE_PATH
-acbuild begin
+acbuild --no-history begin
 for i in $BASE_PATH/rootfs/* ; do
     j=$(basename $i)
-    acbuild copy $i $j
+    acbuild --no-history copy $i $j
 done
 
-acbuild label add os linux
-acbuild label add version latest
+version=$(date +%Y.%m.%d-`cd kurmaos-source && git rev-parse HEAD | cut -c1-8`)
+acbuild --no-history label add os linux
+acbuild --no-history label add arch amd64
+acbuild --no-history label add version v$version
 
-acbuild set-exec /start.sh
-acbuild set-user 0
-acbuild set-group 0
-acbuild set-name apcera.com/kurma/ntp
+acbuild --no-history set-exec /start.sh
+acbuild --no-history set-user 0
+acbuild --no-history set-group 0
+acbuild --no-history set-name apcera.com/kurma/ntp
 
 # add our custom isolators
-jq -c -s '.[0] * .[1]' .acbuild/currentaci/manifest kurmaos-source/aci/ntp/isolator.json > manifest
-mv manifest .acbuild/currentaci/manifest
+acbuild --no-history isolator add host/privileged kurmaos-source/aci/ntp/isolator-true.json
+acbuild --no-history isolator add os/linux/namespaces kurmaos-source/aci/ntp/isolator-namespaces.json
 
-acbuild write --overwrite ntp.aci
-acbuild end
+acbuild --no-history write --overwrite ntp.aci
+acbuild --no-history end
