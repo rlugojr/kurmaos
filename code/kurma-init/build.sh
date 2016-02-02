@@ -7,7 +7,7 @@ set -e -x
 # calculate ldflags for the version number
 version="$(git --git-dir=$BASE_PATH/kurma-source/.git describe --tags | cut -d'-' -f1)+git"
 if [[ -f $BASE_PATH/version/number ]]; then
-    verison=$(cat $BASE_PATH/version/number)
+    version=$(cat $BASE_PATH/version/number)
 fi
 BUILD_LDFLAGS="-X github.com/apcera/kurma/stage1/client.version=$version"
 

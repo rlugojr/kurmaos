@@ -6,7 +6,7 @@ set -e -x
 
 version="$(git --git-dir=$BASE_PATH/kurma-source/.git describe --tags | cut -d'-' -f1)+git"
 if [[ -f $BASE_PATH/version/number ]]; then
-    verison=$(cat $BASE_PATH/version/number)
+    version=$(cat $BASE_PATH/version/number)
 fi
 
 mkdir $BASE_PATH/rootfs
