@@ -91,7 +91,6 @@ echo "VERSION=$version" >> etc/os-release
 echo "ID=kurmaos" >> etc/os-release
 echo "PRETTY_NAME=KurmaOS v$version" >> etc/os-release
 
-
 # copy kurma and needed dynamic libraries
 mkdir -p lib
 ln -s lib lib64

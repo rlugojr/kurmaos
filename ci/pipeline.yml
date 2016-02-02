@@ -216,10 +216,13 @@ jobs:
       - get: busybox-aci-image
         passed: [ busybox-aci ]
       - get: kurma-source
-        passed: [ ci, kurma-cli ]
+        passed: [ build-it, kurma-cli ]
       - get: kurmaos-source
       - get: kurma-cli-linux-amd64
+        passed: [ kurma-cli ]
+        trigger: true
       - get: apcera-util-source
+      - get: version
     - task: build
       file: kurmaos-source/aci/console/task.yml
     - put: console-aci-image
@@ -247,8 +250,9 @@ jobs:
     - aggregate:
       - get: kurmaos-source
       - get: kurma-source
-        passed: [ ci ]
       - get: version
+        passed: [ build-it ]
+        trigger: true
     - task: build
       file: kurmaos-source/aci/kurma-api/task.yml
     - put: kurma-api-aci-image
@@ -259,9 +263,11 @@ jobs:
     - aggregate:
       - get: kurmaos-source
       - get: kurma-source
-        passed: [ ci, kurma-init ]
       - get: kurma-init-build
+        passed: [ kurma-init ]
+        trigger: true
       - get: version
+        passed: [ kurma-init ]
     - task: build
       file: kurmaos-source/aci/kurma-upgrader/task.yml
     - put: kurma-upgrader-aci-image
@@ -280,9 +286,10 @@ jobs:
   plan:
   - aggregate:
     - get: kurma-source
-      passed: [ ci ]
     - get: kurmaos-source
     - get: version
+      passed: [ build-it ]
+      trigger: true
   - task: build
     file: kurmaos-source/code/kurma-server/task.yml
   - put: kurma-server-linux-amd64
@@ -292,9 +299,10 @@ jobs:
   plan:
   - aggregate:
     - get: kurma-source
-      passed: [ ci ]
     - get: kurmaos-source
     - get: version
+      passed: [ build-it ]
+      trigger: true
   - aggregate:
     - task: linux
       file: kurmaos-source/code/kurma-cli/task-linux.yml
@@ -314,14 +322,18 @@ jobs:
         passed: [ ntp-aci ]
       - get: udev-aci-image
         passed: [ udev-aci ]
+      - get: busybox-aci-image
+        passed: [ console-aci ]
       - get: console-aci-image
         passed: [ console-aci ]
       - get: kurma-api-aci-image
         passed: [ kurma-api-aci ]
       - get: kurma-source
-        passed: [ ci ]
+        passed: [ build-it, console-aci, kurma-api-aci ]
       - get: kurmaos-source
       - get: version
+        passed: [ build-it, console-aci, kurma-api-aci ]
+        trigger: true
     - task: build
       file: kurmaos-source/code/kurma-init/task.yml
       config:
@@ -345,8 +357,10 @@ jobs:
     - aggregate:
       - get: kurma-init-build
         passed: [ kurma-init ]
+        trigger: true
       - get: kurmaos-source
       - get: version
+        passed: [ kurma-init ]
     - task: build
       file: kurmaos-source/packaging/kurmaos-disk/task.yml
       privileged: true
@@ -359,8 +373,10 @@ jobs:
     - aggregate:
       - get: kurmaos-disk-image
         passed: [ kurmaos-disk ]
+        trigger: true
       - get: kurmaos-source
       - get: version
+        passed: [ kurmaos-disk ]
     - task: build
       file: kurmaos-source/packaging/disk-vmware/task.yml
       privileged: true
@@ -373,8 +389,10 @@ jobs:
     - aggregate:
       - get: kurmaos-disk-image
         passed: [ kurmaos-disk ]
+        trigger: true
       - get: kurmaos-source
       - get: version
+        passed: [ kurmaos-disk ]
     - task: build
       file: kurmaos-source/packaging/disk-virtualbox/task.yml
     - put: disk-virtualbox-image
@@ -386,8 +404,10 @@ jobs:
     - aggregate:
       - get: kurmaos-disk-image
         passed: [ kurmaos-disk ]
+        trigger: true
       - get: kurmaos-source
       - get: version
+        passed: [ kurmaos-disk ]
     - task: build
       file: kurmaos-source/packaging/disk-openstack/task.yml
     - put: disk-openstack-image
@@ -497,7 +517,6 @@ jobs:
   plan:
   - aggregate:
     - get: version
-      params: { bump: final }
     - get: kurma-source
     - get: kurmaos-source
 - name: ship-it
@@ -523,10 +542,9 @@ jobs:
   public: true
   serial_groups: [ version ]
   plan:
-  - get: kurma-source
-    passed: [ ci ]
-  - get: kurmaos-source
   - get: version
+    passed: [ build-it ]
+    trigger: true
     params: { pre: rc }
   - put: version
     params: { file: version/number }
