@@ -32,8 +32,6 @@ ln -s poweroff rootfs/sbin/reboot
 
 # copy cgpt
 cp /usr/bin/cgpt rootfs/bin/cgpt
-mkdir -p rootfs/bin/old_bins
-cp /usr/bin/old_bins/cgpt rootfs/bin/old_bins/cgpt
 
 # create a symlink so the console can access kernel modules from the host
 ln -s /host/proc/1/rootfs/lib/firmware rootfs/lib/firmware

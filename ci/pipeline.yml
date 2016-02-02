@@ -53,7 +53,7 @@ jobs:
   plan:
   - aggregate:
     - get: kurma-source
-      trigger: true
+      #trigger: true
     - get: kurmaos-source
   - task: test
     file: kurmaos-source/ci/test/task.yml
@@ -230,8 +230,12 @@ jobs:
         from: console.aci
 - name: ntp-aci
   plan:
-    - aggregate:
-      - get: kurmaos-source
+    - get: kurmaos-stage4-image
+      passed: [ kurmaos-stage4 ]
+      trigger: true
+      params:
+        skip_download: true
+    - get: kurmaos-source
     - task: build
       file: kurmaos-source/aci/ntp/task.yml
     - put: ntp-aci-image
@@ -239,6 +243,11 @@ jobs:
         from: ntp.aci
 - name: udev-aci
   plan:
+    - get: kurmaos-stage4-image
+      passed: [ kurmaos-stage4 ]
+      trigger: true
+      params:
+        skip_download: true
     - get: kurmaos-source
     - task: build
       file: kurmaos-source/aci/udev/task.yml

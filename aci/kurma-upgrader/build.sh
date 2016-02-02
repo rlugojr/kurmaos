@@ -23,8 +23,6 @@ tar -xf $BASE_PATH/kurma-init-build/kurma-init.tar.gz
 
 # copy bins
 cp /usr/bin/cgpt .
-mkdir -p old_bins
-cp /usr/bin/old_bins/cgpt old_bins/cgpt
 cp /usr/sbin/kexec .
 
 # setup etc and lib folders

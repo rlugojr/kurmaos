@@ -25,14 +25,14 @@
       "3":{
         "label":"KURMA-A",
         "uuid":"aa608ef3-dc7d-4bdd-b2b2-b87b3832f47f",
-        "type":"coreos-rootfs",
+        "type":"kurmaos-marker",
         "blocks":"4096",
         "features": ["prioritize", "verity"]
       },
       "4":{
         "label":"KURMA-B",
         "uuid":"16294bcb-da53-458d-bc1c-7dbf84893896",
-        "type":"coreos-rootfs",
+        "type":"kurmaos-marker",
         "blocks":"4096"
       },
       "5":{
@@ -44,7 +44,7 @@
       },
       "6":{
         "label":"ROOT",
-        "type":"coreos-resize",
+        "type":"kurmaos-resize",
         "blocks":"2097152",
         "fs_type":"ext4",
         "mount":"/"

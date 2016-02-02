@@ -72,10 +72,6 @@ ln -s mke2fs bin/mkfs.ext4dev
 cp /sbin/resize2fs bin/resize2fs
 cp /usr/bin/cgpt bin/cgpt
 
-# cgpt has this weird hard coded path for a child cgpt
-mkdir -p bin/old_bins
-cp /usr/bin/old_bins/cgpt bin/old_bins/cgpt
-
 # setup etc
 mkdir -p etc/ssl/certs
 cp $BASE_PATH/kurmaos-source/code/kurma-init/kurma.json etc/kurma.json
@@ -95,12 +91,6 @@ echo "PRETTY_NAME=KurmaOS v$version" >> etc/os-release
 mkdir -p lib
 ln -s lib lib64
 LD_TRACE_LOADED_OBJECTS=1 ./kurma | grep so | grep -v linux-vdso.so.1 \
-    | sed -e '/^[^\t]/ d' \
-    | sed -e 's/\t//' \
-    | sed -e 's/.*=..//' \
-    | sed -e 's/ (0.*)//' \
-    | xargs -I % cp % lib/
-LD_TRACE_LOADED_OBJECTS=1 ./bin/old_bins/cgpt | grep so | grep -v linux-vdso.so.1 \
     | sed -e '/^[^\t]/ d' \
     | sed -e 's/\t//' \
     | sed -e 's/.*=..//' \
