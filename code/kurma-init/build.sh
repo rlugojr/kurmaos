@@ -113,12 +113,9 @@ LD_TRACE_LOADED_OBJECTS=1 ./bin/resize2fs | grep so | grep -v linux-vdso.so.1 \
 cp /etc/nsswitch.conf etc/
 cp /lib/libc.so.6 lib/
 cp /lib/ld-linux-x86-64.so.2 lib/
-cp /lib/libnss_dns-2.20.so lib/
-cp /lib/libnss_files-2.20.so lib/
-cp /lib/libresolv-2.20.so lib/
-ln -s libnss_dns-2.20.so lib/libnss_dns.so.2
-ln -s libnss_files-2.20.so lib/libnss_files.so.2
-ln -s libresolv-2.20.so lib/libresolv.so.2
+cp /lib/libnss_dns-*.so lib/
+cp /lib/libnss_files-*.so lib/
+cp /lib/libresolv-*.so lib/
 
 # generate ld.so.cache
 echo "/lib" > etc/ld.so.conf
