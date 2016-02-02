@@ -82,10 +82,15 @@ cp $BASE_PATH/kurmaos-source/code/kurma-init/kurma.json etc/kurma.json
 chown 0:0 etc/kurma.json
 touch etc/mtab
 touch etc/resolv.conf
-echo 'LSB_VERSION=1.4' > etc/lsb-release
-echo 'DISTRIB_ID=KurmaOS' > etc/lsb-release
-echo 'DISTRIB_RELEASE=rolling' > etc/lsb-release
-echo 'DISTRIB_DESCRIPTION=KurmaOS' > etc/lsb-release
+echo "LSB_VERSION=1.4" > etc/lsb-release
+echo "DISTRIB_ID=KurmaOS" >> etc/lsb-release
+echo "DISTRIB_RELEASE=rolling" >> etc/lsb-release
+echo "DISTRIB_DESCRIPTION=KurmaOS" >> etc/lsb-release
+echo "NAME=KurmaOS" > etc/os-release
+echo "VERSION=$version" >> etc/os-release
+echo "ID=kurmaos" >> etc/os-release
+echo "PRETTY_NAME=KurmaOS v$version" >> etc/os-release
+
 
 # copy kurma and needed dynamic libraries
 mkdir -p lib
