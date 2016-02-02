@@ -42,6 +42,9 @@ cp $BASE_PATH/kurmaos-source/packaging/disk-vmware/oem-grub.cfg /tmp/rootfs/boot
 cd $BASE_PATH
 qemu-img convert -f raw kurmaos-disk-image/kurmaos-disk.img -O vmdk -o adapter_type=lsilogic kurmaos.vmdk
 
+# remove intermediate files to speed up concourse post-build ops
+rm kurmaos-disk-image/kurmaos-disk.img
+
 # Package it up
 cp kurmaos-source/packaging/disk-vmware/kurmaos.vmx kurmaos.vmx
 cp kurmaos-source/LICENSE LICENSE
