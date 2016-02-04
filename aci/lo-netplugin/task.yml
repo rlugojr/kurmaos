@@ -1,0 +1,11 @@
+---
+platform: linux
+
+image: docker:///apcera/kurmaos-stage4
+
+inputs:
+  - name: kurmaos-source
+  - name: kurma-source
+
+run:
+  path: kurmaos-source/aci/lo-netplugin/build.sh

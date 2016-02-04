@@ -1,0 +1,12 @@
+---
+platform: linux
+
+image: docker:///apcera/kurmaos-stage4
+
+inputs:
+  - name: busybox-aci-image
+  - name: appc-cni-source
+  - name: kurmaos-source
+
+run:
+  path: kurmaos-source/aci/cni-netplugin/build.sh

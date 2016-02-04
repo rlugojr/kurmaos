@@ -32,6 +32,8 @@ cp $BASE_PATH/console-aci-image/console.aci acis/console.aci
 cp $BASE_PATH/ntp-aci-image/ntp.aci acis/ntp.aci
 cp $BASE_PATH/udev-aci-image/udev.aci acis/udev.aci
 cp $BASE_PATH/kurma-api-aci-image/kurma-api.aci acis/kurma-api.aci
+cp $BASE_PATH/lo-netplugin-aci-image/lo-netplugin.aci acis/lo-netplugin.aci
+cp $BASE_PATH/cni-netplugin-aci-image/cni-netplugin.aci acis/cni-netplugin.aci
 
 # configure the init script
 ln -s kurma init

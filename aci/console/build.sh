@@ -34,8 +34,8 @@ ln -s poweroff rootfs/sbin/reboot
 cp /usr/bin/cgpt rootfs/bin/cgpt
 
 # create a symlink so the console can access kernel modules from the host
-ln -s /host/proc/1/rootfs/lib/firmware rootfs/lib/firmware
-ln -s /host/proc/1/rootfs/lib/modules rootfs/lib/modules
+ln -s /host/proc/1/root/lib/firmware rootfs/lib/firmware
+ln -s /host/proc/1/root/lib/modules rootfs/lib/modules
 
 # generate the aci
 cd $BASE_PATH
