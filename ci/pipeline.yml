@@ -364,7 +364,7 @@ jobs:
       - get: kurma-api-aci-image
         passed: [ kurma-api-aci ]
       - get: lo-netplugin-aci-image
-        passed: [ kurma-lo-netplugin-aci ]
+        passed: [ lo-netplugin-aci ]
       - get: cni-netplugin-aci-image
         passed: [ cni-netplugin-aci ]
       - get: kurma-source
