@@ -29,6 +29,8 @@ groups:
   - kurma-cli
   - kurma-upgrader-aci
   - console-aci
+  - lo-netplugin-aci
+  - cni-netplugin-aci
   - kurma-init
 - name: machines
   jobs:
@@ -282,7 +284,31 @@ jobs:
     - put: kurma-upgrader-aci-image
       params:
         from: kurma-upgrader.aci
-
+- name: lo-netplugin-aci
+  plan:
+    - aggregate:
+      - get: kurmaos-source
+      - get: kurma-source
+      - get: version
+        passed: [ build-it ]
+        trigger: true
+    - task: build
+      file: kurmaos-source/aci/lo-netplugin/task.yml
+    - put: lo-netplugin-aci-image
+      params:
+        from: lo-netplugin.aci
+- name: cni-netplugin-aci
+  plan:
+    - aggregate:
+      - get: kurmaos-source
+      - get: busybox-aci-image
+        passed: [ busybox-aci ]
+      - get: appc-cni-source
+    - task: build
+      file: kurmaos-source/aci/cni-netplugin/task.yml
+    - put: cni-netplugin-aci-image
+      params:
+        from: cni-netplugin.aci
 
 
 
@@ -337,11 +363,15 @@ jobs:
         passed: [ console-aci ]
       - get: kurma-api-aci-image
         passed: [ kurma-api-aci ]
+      - get: lo-netplugin-aci-image
+        passed: [ kurma-lo-netplugin-aci ]
+      - get: cni-netplugin-aci-image
+        passed: [ cni-netplugin-aci ]
       - get: kurma-source
-        passed: [ build-it, console-aci, kurma-api-aci ]
+        passed: [ build-it, console-aci, kurma-api-aci, lo-netplugin-aci ]
       - get: kurmaos-source
       - get: version
-        passed: [ build-it, console-aci, kurma-api-aci ]
+        passed: [ build-it, console-aci, kurma-api-aci, lo-netplugin-aci ]
         trigger: true
     - task: build
       file: kurmaos-source/code/kurma-init/task.yml
@@ -633,6 +663,10 @@ resources:
   type: git
   source:
     uri: https://github.com/apcera/util.git
+- name: appc-cni-source
+  type: git
+  source:
+    uri: https://github.com/appc/cni.git
 
   # Build Artifacts
 - name: buildroot-base
@@ -683,6 +717,22 @@ resources:
     access_key_id: {{aws-access-key}}
     secret_access_key: {{aws-secret-key}}
     versioned_file: aci/kurma-upgrader.aci
+- name: lo-netplugin-aci-image
+  type: s3
+  source:
+    bucket: kurmaos-artifacts
+    region_name: us-west-2
+    access_key_id: {{aws-access-key}}
+    secret_access_key: {{aws-secret-key}}
+    versioned_file: aci/lo-netplugin.aci
+- name: cni-netplugin-aci-image
+  type: s3
+  source:
+    bucket: kurmaos-artifacts
+    region_name: us-west-2
+    access_key_id: {{aws-access-key}}
+    secret_access_key: {{aws-secret-key}}
+    versioned_file: aci/cni-netplugin.aci
 - name: console-aci-image
   type: s3
   source:

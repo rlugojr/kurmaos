@@ -14,7 +14,6 @@
     "iptable_filter",
     "veth"
   ],
-  "required_namespaces": [ "mount", "pid" ],
   "disks": [
     { "device": "LABEL=ROOT",
       "fstype": "ext4",
@@ -47,5 +46,26 @@
   },
   "init_containers": [
     "apcera.com/kurma/api"
+  ],
+  "container_networks": [
+    {
+      "name": "lo",
+      "aci": "apcera.com/kurma/lo-netplugin",
+      "containerInterface": "lo"
+    },
+    {
+      "name": "bridge",
+      "aci": "apcera.com/kurma/cni-netplugin",
+      "containerInterface": "veth+{{shortuuid}}",
+      "type": "bridge",
+      "bridge": "bridge0",
+      "isGateway": true,
+      "ipMasq": true,
+      "ipam": {
+        "type": "host-local",
+        "subnet": "10.220.0.0/16",
+        "routes": [ { "dst": "0.0.0.0/0" } ]
+      }
+    }
   ]
 }

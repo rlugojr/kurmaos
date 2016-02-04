@@ -11,6 +11,8 @@ inputs:
   - name: kurma-api-aci-image
   - name: kurma-source
   - name: kurmaos-source
+  - name: lo-netplugin-aci-image
+  - name: cni-netplugin-aci-image
   - name: version
 
 run:
