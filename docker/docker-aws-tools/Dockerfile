@@ -5,7 +5,7 @@ RUN apt-get update
 
 ENV DEBIAN_FRONTEND noninteractive
 
-RUN apt-get install -y --no-install-recommends wget openjdk-7-jre-headless git-core unzip python2.7-minimal python-argparse
+RUN apt-get install -y --no-install-recommends wget openjdk-7-jre-headless git-core unzip
 
 RUN wget --no-check-certificate https://get.docker.io/builds/Linux/x86_64/docker-latest \
     -O /usr/local/bin/docker && \
