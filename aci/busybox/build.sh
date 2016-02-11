@@ -9,8 +9,6 @@ tar xzf buildroot-base/buildroot.tar.gz -C rootfs --exclude=./dev
 
 # clean out some stuff
 mkdir -p rootfs/dev
-rm -rf rootfs/etc/ssl
-rm -rf rootfs/usr/share/*
 echo -n '' > rootfs/etc/hostname
 echo -n '' > rootfs/etc/hosts
 rm rootfs/etc/resolv.conf
