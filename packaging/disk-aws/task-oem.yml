@@ -1,0 +1,11 @@
+---
+platform: linux
+
+image: docker:///apcera/kurmaos-stage4
+
+inputs:
+  - name: kurmaos-disk-image
+  - name: kurmaos-source
+
+run:
+  path: kurmaos-source/packaging/disk-aws/oem.sh
