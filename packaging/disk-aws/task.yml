@@ -4,7 +4,7 @@ platform: linux
 image: docker:///apcera/docker-aws-tools
 
 inputs:
-  - name: kurmaos-disk-image
+  - name: oem-prep
   - name: kurma-source
   - name: kurmaos-source
   - name: version

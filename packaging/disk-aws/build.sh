@@ -13,9 +13,9 @@ fi
 # Import the image into AWS
 cd kurmaos-source/packaging/disk-aws
 ./import.sh -B kurmaos-temp-disk-images \
-            -p $BASE_PATH/kurmaos-disk-image/kurmaos-disk.img \
+            -p $BASE_PATH/oem-prep/kurmaos-disk-image/kurmaos-disk.img \
             -V $version \
             -Z us-west-2a | tee $BASE_PATH/instances.txt
 
 # remove intermediate files to speed up concourse post-build ops
-rm $BASE_PATH/kurmaos-disk-image/kurmaos-disk.img
+rm $BASE_PATH/oem-prep/kurmaos-disk-image/kurmaos-disk.img
