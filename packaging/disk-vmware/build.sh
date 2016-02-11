@@ -4,10 +4,7 @@ BASE_PATH=`pwd`
 
 set -e -x
 
-# wire up virtualbox capabilities
 function containers_gone_wild() {
-  # disabled while we've switched to garden-systemd
-  # # permit usage of vboxdrv node by tacking it into our own cgroup
   mkdir /tmp/devices-cgroup
   mount -t cgroup -o devices none /tmp/devices-cgroup
 
