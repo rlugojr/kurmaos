@@ -19,6 +19,10 @@ if [ -n "$CONSOLE_KEYS" ]; then
   chmod 700 /root/.ssh
   echo "$CONSOLE_KEYS" > /root/.ssh/authorized_keys
   chmod 600 /root/.ssh/authorized_keys
+else
+  # FIXME only do this for now when keys aren't available, ideally should inform
+  # the user on the console.
+  echo "PermitRootLogin yes" >> /etc/ssh/sshd_config
 fi
 
 rm /start.sh
