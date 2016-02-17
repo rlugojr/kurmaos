@@ -1,7 +1,7 @@
 ---
 platform: linux
 
-image: docker:///apcera/kurmaos-kernel
+image: docker:///apcera/kurmaos-kernel#20160217-8f406bfb
 
 inputs:
   - name: ntp-aci-image
