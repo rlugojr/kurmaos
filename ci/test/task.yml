@@ -1,7 +1,7 @@
 ---
 platform: linux
 
-image: docker:///apcera/kurmaos-stage4#20160217-5332433f
+image: docker:///apcera/kurmaos-stage4#20160217-152c1e11
 
 inputs:
   - name: kurma-source
