@@ -14,6 +14,10 @@ echo 'FEATURES="-sandbox -usersandbox"' >> /etc/portage/make.conf
 # update portage
 emerge-webrsync
 
+# Fix for CVE-2015-7547
+echo "=sys-libs/glibc-2.21-r2" >> /etc/portage/package.accept_keywords
+emerge =sys-libs/glibc-2.21-r2
+
 # install layman
 emerge app-portage/layman
 

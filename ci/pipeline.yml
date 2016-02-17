@@ -117,14 +117,15 @@ jobs:
   - put: kurmaos-stage4-image
     params:
       build: kurmaos-source/docker/kurmaos-stage4
-    get_params:
-      skip_download: true
-  - put: kurmaos-stage4-image
-    params:
-      pull_repository: apcera/kurmaos-stage4
       tag: tag-date/image-tag
     get_params:
       skip_download: true
+#  - put: kurmaos-stage4-image
+#    params:
+#      pull_repository: apcera/kurmaos-stage4
+#      tag: tag-date/image-tag
+#    get_params:
+#      skip_download: true
 - name: kurmaos-kernel
   serial_groups: [ docker ]
   plan:
@@ -149,14 +150,15 @@ jobs:
   - put: kurmaos-kernel-image
     params:
       build: kurmaos-source/docker/kurmaos-kernel
-    get_params:
-      skip_download: true
-  - put: kurmaos-kernel-image
-    params:
-      pull_repository: apcera/kurmaos-kernel
       tag: tag-date/image-tag
     get_params:
       skip_download: true
+#  - put: kurmaos-kernel-image
+#    params:
+#      pull_repository: apcera/kurmaos-kernel
+#      tag: tag-date/image-tag
+#    get_params:
+#      skip_download: true
 - name: docker-aws-tools
   serial_groups: [ docker ]
   plan:
@@ -651,13 +653,13 @@ resources:
   type: git
   source:
     uri: git@github.com:apcera/kurma.git
-    branch: master
+    branch: stable-0.3.x
     private_key: {{github-write-private-key}}
 - name: kurmaos-source
   type: git
   source:
     uri: git@github.com:apcera/kurmaos.git
-    branch: master
+    branch: stable-0.3.x
     private_key: {{github-write-private-key}}
 - name: apcera-util-source
   type: git
