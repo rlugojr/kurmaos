@@ -23,7 +23,7 @@ emerge app-portage/layman
 
 # Add in the Apcera overlay. This contains specific ebuilds which we'll want
 # to reference.
-layman -o https://raw.githubusercontent.com/apcera/kurmaos-overlay/master/overlay.xml -f -a kurmaos-overlay
+layman -o https://raw.githubusercontent.com/apcera/kurmaos-overlay/stable-0.3.x/overlay.xml -f -a kurmaos-overlay
 echo 'source /var/lib/layman/make.conf' >> /etc/portage/make.conf
 echo 'kurmaos-base' >> /etc/portage/categories
 echo "=app-emulation/open-vm-tools-9.10.0" >> /etc/portage/package.unmask
