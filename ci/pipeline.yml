@@ -227,6 +227,7 @@ jobs:
         trigger: true
       - get: apcera-util-source
       - get: version
+        passed: [ build-it ]
     - task: build
       file: kurmaos-source/aci/console/task.yml
     - put: console-aci-image
@@ -464,7 +465,10 @@ jobs:
   - aggregate:
     - get: version
       passed: [ build-it ]
+    - get: kurma-source
+      passed: [ build-it ]
     - get: kurmaos-source
+      passed: [ build-it ]
     - get: kurma-cli-linux-amd64
     - get: kurma-cli-darwin-amd64
     - get: kurma-server-linux-amd64
@@ -509,6 +513,10 @@ jobs:
 - name: github-it
   plan:
   - aggregate:
+    - get: kurma-source
+      passed: [ rollout ]
+    - get: kurmaos-source
+      passed: [ rollout ]
     - get: version
       passed: [ rollout ]
     - get: release-kurma-server-linux-amd64
@@ -528,15 +536,18 @@ jobs:
       platform: linux
       image: "docker:///busybox"
       inputs:
-        - name: version
+      - name: version
+      - name: kurma-source
+      - name: kurmaos-source
       run:
         path: /bin/sh
         args:
         - "-c"
-        - "echo v`cat version/number`> release_name && cat release_name"
+        - "echo v`cat version/number`> release_name && cat release_name && git --git-dir=kurma-source/.git rev-parse HEAD > kurma_commit && git --git-dir=kurmaos-source/.git rev-parse HEAD > kurmaos_commit"
   - put: kurma-release
     params:
       name: prep/release_name
+      commitish: prep/kurma_commit
       tag: version/number
       globs:
       - "**/*.tar.gz"
@@ -545,6 +556,7 @@ jobs:
   - put: kurmaos-release
     params:
       name: prep/release_name
+      commitish: prep/kurmaos_commit
       tag: version/number
       globs:
       - "**/*.tar.gz"
