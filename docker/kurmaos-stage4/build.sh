@@ -11,6 +11,9 @@ echo 'GRUB_PLATFORMS="efi-64 pc xen"' >> /etc/portage/make.conf
 # when in a normal chroot.
 echo 'FEATURES="-sandbox -usersandbox"' >> /etc/portage/make.conf
 
+# Enable building static libraries when installing packages.
+echo 'USE="$USE static-libs"' >> /etc/portage/make.conf
+
 # update portage
 emerge-webrsync
 
