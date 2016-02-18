@@ -14,6 +14,14 @@ echo 'FEATURES="-sandbox -usersandbox"' >> /etc/portage/make.conf
 # Enable building static libraries when installing packages.
 echo 'USE="$USE static-libs"' >> /etc/portage/make.conf
 
+##
+## LOCAL USE FLAGS
+##
+
+# eudev use kmod
+echo 'sys-fs/eudev kmod' >> /etc/portage/package.use/eudev
+
+
 # update portage
 emerge-webrsync
 
