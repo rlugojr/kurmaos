@@ -19,7 +19,7 @@ docker run --rm \
        -v `pwd`/../../output/kurma-api.aci:/tmp/build/kurma-api-aci-image/kurma-api.aci \
        -v `pwd`/../../output/$output_filename:/tmp/build/$output_filename \
        -w /tmp/build \
-       apcera/kurmaos-kernel \
+       apcera/kurmaos-kernel:20160217-8f406bfb \
        ./kurmaos-source/code/kurma-init/build.sh
 
 echo "Compiled output available in ../../output/$output_filename"
