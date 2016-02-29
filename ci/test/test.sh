@@ -26,5 +26,6 @@ ln -s $BASE_PATH/kurma-source go/src/github.com/apcera/kurma
 export GOPATH="$BASE_PATH/go"
 
 cd go/src/github.com/apcera/kurma
-go test -i ./...
-go test -v ./...
+novendor=$(go list ./... | grep -v /vendor/)
+go test -i $novendor
+go test -v $novendor
