@@ -13,7 +13,7 @@ mkdir $BASE_PATH/rootfs
 
 mkdir -p go/src/github.com/apcera
 ln -s $BASE_PATH/kurma-source go/src/github.com/apcera/kurma
-export GOPATH="$BASE_PATH/go:$BASE_PATH/kurma-source/Godeps/_workspace"
+export GOPATH="$BASE_PATH/go"
 go build -a -o $BASE_PATH/rootfs/kurma-upgrader go/src/github.com/apcera/kurma/util/installer/installer.go
 
 cd $BASE_PATH/rootfs

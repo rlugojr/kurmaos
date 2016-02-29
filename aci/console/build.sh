@@ -7,7 +7,7 @@ set -e -x
 # setup for building go
 mkdir -p go/src/github.com/apcera
 ln -s $BASE_PATH/kurma-source go/src/github.com/apcera/kurma
-export GOPATH="$BASE_PATH/go:$BASE_PATH/kurma-source/Godeps/_workspace"
+export GOPATH="$BASE_PATH/go"
 TARGET=$BASE_PATH/go/src/github.com/apcera/kurma
 
 # create the rootfs
