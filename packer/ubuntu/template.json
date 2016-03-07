@@ -31,7 +31,10 @@
       "ssh_private_ip": true,
       "ssh_username": "ubuntu",
       "ami_groups": [ "all" ],
-      "ami_name": "kurma-tests-ubuntu-{{user `source_release`}}-{{timestamp}}"
+      "ami_name": "kurma-tests-ubuntu-{{user `source_release`}}-{{timestamp}}",
+      "tags": {
+        "Name": "kurma-tests-ubuntu-{{user `source_release`}}-{{timestamp}}"
+      }
     }
   ]
 }
