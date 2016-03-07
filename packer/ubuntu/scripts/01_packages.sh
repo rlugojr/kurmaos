@@ -1,5 +1,5 @@
 # Abort on error
-set -e -u
+set -e -x
 
 # Update packages
 apt-get --yes --force-yes update

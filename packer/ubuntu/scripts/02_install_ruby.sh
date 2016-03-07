@@ -1,5 +1,5 @@
 # Abort on error
-set -e -u
+set -e -x
 
 # We use checksums even when the value is just one we derive, which doesn't
 # prove untampered from maintainer, but proves no corruption in download and
