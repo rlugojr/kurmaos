@@ -12,8 +12,12 @@ export DEBIAN_FRONTEND UCF_FORCE_CONFFNEW
 ucf --purge /boot/grub/menu.lst
 apt-get -o Dpkg::Options::="--force-confnew" --force-yes -fuy dist-upgrade
 
-# Install linux-image-extra for aufs
-apt-get -y install linux-image-extra
+# Install linux-image-extra. No longer exists after Ubuntu 15.04. Of releases
+# before then, we only care about Ubuntu 14.04 and 12.04.
+ubuntuRelease=$(lsb_release -s -r)
+if [[ "$ubuntuRelease" == "14.04" || "$ubuntuRelease" == "12.04" ]]; then
+    apt-get -y install linux-image-extra
+fi
 
 # Some needed apps/libraries
 apt-get -y install git s3cmd libcap2
