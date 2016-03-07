@@ -12,8 +12,10 @@ fi
 BUILD_LDFLAGS="-X github.com/apcera/kurma/stage1/client.version=$version"
 
 # setup the gopath
-mkdir -p go/src/github.com/apcera
-ln -s $BASE_PATH/kurma-source go/src/github.com/apcera/kurma
+if [[ ! -f go/src/github.com/apcera/kurma ]]; then
+    mkdir -p go/src/github.com/apcera
+    ln -s $BASE_PATH/kurma-source go/src/github.com/apcera/kurma
+fi
 export GOPATH="$BASE_PATH/go"
 TARGET=$BASE_PATH/go/src/github.com/apcera/kurma
 
