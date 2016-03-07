@@ -27,4 +27,4 @@ if [[ "$ubuntuRelease" == "14.04" || "$ubuntuRelease" == "12.04" ]]; then
 fi
 
 # Some needed apps/libraries
-apt-get -y install git s3cmd libcap2
+apt-get -y install git libcap2
