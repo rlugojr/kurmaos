@@ -27,6 +27,7 @@
       "subnet_id": "subnet-e1aa5385",
       "security_group_id": "sg-9a26a6fd",
       "instance_type": "m3.medium",
+      "associate_public_ip_address": true,
       "ssh_username": "ubuntu",
       "ami_groups": [ "all" ],
       "ami_name": "kurma-tests-ubuntu-{{user `source_release`}}-{{timestamp}}"
