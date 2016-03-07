@@ -13,7 +13,7 @@ ucf --purge /boot/grub/menu.lst
 apt-get -o Dpkg::Options::="--force-confnew" --force-yes -fuy dist-upgrade
 
 # Install linux-image-extra for aufs
-linux-image-extra
+apt-get -y install linux-image-extra
 
 # Some needed apps/libraries
 apt-get -y install git s3cmd libcap2
