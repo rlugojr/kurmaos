@@ -31,7 +31,6 @@
       "ssh_private_ip": true,
       "ssh_username": "centos",
       "ssh_pty": true,
-      "ami_groups": [ "all" ],
       "ami_name": "kurma-tests-centos-{{user `source_release`}}-{{timestamp}}",
       "tags": {
         "Name": "kurma-tests-centos-{{user `source_release`}}-{{timestamp}}"
