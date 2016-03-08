@@ -22,7 +22,7 @@ apt-get -o Dpkg::Options::="--force-confnew" --force-yes -fuy dist-upgrade
 
 # Install the specific needed linux-image-extra to get aufs
 extraPkg=$(dpkg -l | grep linux-image | grep -v linux-image-virtual | awk '{print $2}' | sed -e 's#linux-image#linux-image-extra#g')
-apt-get -y install extraPkg
+apt-get -y install $extraPkg
 
 # Some needed apps/libraries
 apt-get -y install git libcap2
