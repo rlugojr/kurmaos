@@ -1,8 +1,10 @@
-# Abort on error
-set -e -x
+set -x
 
 # Update packages
 dnf -y check-update
+
+# Abort on error
+set -e
 
 # Upgrade to the latest
 dnf -y upgrade
