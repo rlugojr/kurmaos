@@ -10,4 +10,4 @@ set -e
 dnf -y upgrade
 
 # Some needed apps/libraries
-dnf -y install git libcap wget
+dnf -y install git libcap wget rsync

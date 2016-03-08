@@ -25,4 +25,4 @@ extraPkg=$(dpkg -l | grep linux-image | grep -v linux-image-virtual | awk '{prin
 apt-get -y install $extraPkg
 
 # Some needed apps/libraries
-apt-get -y install git libcap2
+apt-get -y install git libcap2 rsync
