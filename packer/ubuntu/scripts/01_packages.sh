@@ -10,15 +10,7 @@ echo "deb http://us.archive.ubuntu.com/ubuntu/ $ubuntuCodename-updates main rest
 
 # Update packages
 apt-get --yes --force-yes update
-
-# http://askubuntu.com/questions/146921/how-do-i-apt-get-y-dist-upgrade-without-a-grub-config-prompt
-# Core problem: post-install scripts don't care that we told apt-get --yes/--force-yes
-DEBIAN_FRONTEND=noninteractive
-UCF_FORCE_CONFFNEW=yes
-export DEBIAN_FRONTEND UCF_FORCE_CONFFNEW
-ucf --purge /boot/grub/menu.lst
-apt-get -o Dpkg::Options::="--force-confnew" --force-yes -fuy dist-upgrade
-
+apt-get --force-yes -fuy dist-upgrade
 
 # Install the specific needed linux-image-extra to get aufs
 extraPkg=$(dpkg -l | grep linux-image | grep -v linux-image-virtual | awk '{print $2}' | sed -e 's#linux-image#linux-image-extra#g')
